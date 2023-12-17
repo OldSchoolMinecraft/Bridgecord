@@ -9,6 +9,8 @@ import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
+
 public class BotListener extends ListenerAdapter
 {
     private static final PluginConfig config = Bridgecord.getInstance().getConfig();
@@ -53,16 +55,17 @@ public class BotListener extends ListenerAdapter
 
         if (event.getChannel().getId().equals(String.valueOf(config.getConfigOption("bridgeChannelID"))) && !event.isWebhookMessage() && !event.getAuthor().isBot() && !event.getAuthor().isSystem())
         {
+            ArrayList<String> msgChunks = new ArrayList<>();
             String pre = ChatColor.translateAlternateColorCodes('&', String.valueOf(config.getConfigOption("bridgeMessageFormat")));
             pre = pre.replace("{name}", event.getAuthor().getName());
             pre = pre.replace("{msg}", Util.stripUnprocessedColor(ChatColor.stripColor(event.getMessage().getContentStripped())));
-            if (pre.length() > 100)
-            {
-                event.getMessage().reply("**Your message can't be longer than 100 characters!**").complete();
-                return;
+            if (pre.length() <= 128)
+                msgChunks.add(pre);
+            else {
+                msgChunks.addAll(Util.splitString(pre, 128));
             }
             for (Player p : Bukkit.getOnlinePlayers())
-                p.sendMessage(pre);
+                msgChunks.forEach(p::sendMessage);
             return;
         }
     }

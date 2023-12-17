@@ -12,19 +12,22 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitScheduler;
 
-import java.util.Objects;
+import java.util.*;
 
 public class PlayerHandler implements Listener
 {
     private static final DiscordBot bot = Bridgecord.getInstance().getBot();
     private static final PluginConfig config = Bridgecord.getInstance().getConfig();
     private static final BukkitScheduler scheduler = Bukkit.getScheduler();
+    private static final List<String> blockedKeywords = new ArrayList<>();
 
     private Bridgecord plugin;
 
     public PlayerHandler(Bridgecord plugin)
     {
         this.plugin = plugin;
+
+        blockedKeywords.addAll(config.getStringList("blockedKeywords", Collections.singletonList("@everyone")));
     }
 
     @EventHandler

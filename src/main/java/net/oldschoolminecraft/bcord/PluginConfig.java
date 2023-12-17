@@ -3,6 +3,7 @@ package net.oldschoolminecraft.bcord;
 import org.bukkit.util.config.Configuration;
 
 import java.io.File;
+import java.util.Arrays;
 
 public class PluginConfig extends Configuration
 {
@@ -26,6 +27,8 @@ public class PluginConfig extends Configuration
         generateConfigOption("hidePlayersWithPermission", "bcord.hidden");
         generateConfigOption("useInvisiman", false);
         generateConfigOption("preventUnauthorizedChats", true);
+        generateConfigOption("escapeAtSymbols", true);
+        getStringList("blockedKeywords", Arrays.asList("@everyone", "http://", "https://"));
     }
 
     private void generateConfigOption(String key, Object defaultValue)

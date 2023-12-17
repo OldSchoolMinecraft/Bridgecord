@@ -45,4 +45,15 @@ public class Util
                 })
                 .orElseThrow(() -> new RuntimeException("No auth plugin is installed."));
     }
+
+    public static List<String> splitString(String input, int nbrOfChars)
+    {
+        List<String> chunks = new ArrayList<>();
+        for (int i = 0; i < input.length(); i += nbrOfChars)
+        {
+            String part = input.substring(i, Math.min(input.length(), i + nbrOfChars));
+            chunks.add(part);
+        }
+        return chunks;
+    }
 }
