@@ -26,7 +26,7 @@ public class Bridgecord extends JavaPlugin
         bot = core.getDiscordBot();
 
         bot.jda.addEventListener(new BotListener());
-        getServer().getPluginManager().registerEvents(new PlayerHandler(), this);
+        getServer().getPluginManager().registerEvents(new PlayerHandler(this), this);
 
         System.out.println("Bridgecord enabled");
     }

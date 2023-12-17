@@ -25,6 +25,7 @@ public class PluginConfig extends Configuration
         generateConfigOption("bridgeMessageFormat", "&8{name}:&f {msg}");
         generateConfigOption("hidePlayersWithPermission", "bcord.hidden");
         generateConfigOption("useInvisiman", false);
+        generateConfigOption("preventUnauthorizedChats", true);
     }
 
     private void generateConfigOption(String key, Object defaultValue)

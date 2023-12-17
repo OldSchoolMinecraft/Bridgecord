@@ -11,4 +11,7 @@ dependencies {
     implementation(files("libs/botcore.jar"))
     implementation(files("libs/Invisiman.jar"))
     implementation(files("libs/JoinsPlus.jar"))
+    implementation(files("libs/AuthMe.jar"))
+    implementation(files("libs/OSAS.jar"))
+    implementation(files("libs/xAuth_AP.jar"))
 }
