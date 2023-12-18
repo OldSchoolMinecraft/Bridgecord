@@ -1,4 +1,4 @@
-package net.oldschoolminecraft.bcord;
+package net.oldschoolminecraft.bcord.util;
 
 import net.oldschoolminecraft.bcord.auth.AuthMeHandler;
 import net.oldschoolminecraft.bcord.auth.AuthPluginHandler;

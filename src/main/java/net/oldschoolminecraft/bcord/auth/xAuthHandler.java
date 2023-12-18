@@ -39,6 +39,14 @@ public class xAuthHandler implements AuthPluginHandler
         }
     }
 
+    @Override
+    public void updatePassword(String username, String newPassword) throws AuthHandlerException
+    {
+        if (!isInstalled()) throw new AuthHandlerException("xAuth is not installed");
+        if (!xauth.isRegistered(username)) throw new AuthHandlerException("Player is not registered");
+        xauth.changePass(username, newPassword);
+    }
+
     public JavaPlugin getPlugin() throws AuthHandlerException
     {
         return xauth;

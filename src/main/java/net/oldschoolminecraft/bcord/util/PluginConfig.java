@@ -1,5 +1,7 @@
-package net.oldschoolminecraft.bcord;
+package net.oldschoolminecraft.bcord.util;
 
+import com.sun.scenario.effect.Brightpass;
+import net.oldschoolminecraft.bcord.Bridgecord;
 import org.bukkit.util.config.Configuration;
 
 import java.io.File;
@@ -21,13 +23,32 @@ public class PluginConfig extends Configuration
 
     public void write()
     {
-        generateConfigOption("listCommandLabel", "list");
-        generateConfigOption("bridgeChannelID", "INSERT_CHANNEL_ID");
+        getStringList("bridgeChannelIDs", Arrays.asList("FIRST_CHANNEL_ID", "SECOND_CHANNEL_ID", "THIRD_CHANNEL_ID?"));
         generateConfigOption("bridgeMessageFormat", "&8{name}:&f {msg}");
         generateConfigOption("hidePlayersWithPermission", "bcord.hidden");
         generateConfigOption("useInvisiman", false);
         generateConfigOption("preventUnauthorizedChats", true);
         generateConfigOption("escapeAtSymbols", true);
+
+        generateConfigOption("commands.prefix", "!");
+
+        generateConfigOption("commands.list.enabled", true);
+        generateConfigOption("commands.list.label", "list");
+
+        generateConfigOption("commands.link.enabled", true);
+        generateConfigOption("commands.link.label", "link");
+
+        generateConfigOption("commands.reset.enabled", true);
+        generateConfigOption("commands.reset.label", "reset");
+
+        generateConfigOption("discordLinking.dataSource", "local");
+        generateConfigOption("discordLinking.local.dataDirectory", Bridgecord.getInstance().getDataFolder().getAbsolutePath());
+        generateConfigOption("discordLinking.remote.host", "127.0.0.1");
+        generateConfigOption("discordLinking.remote.port", 3306);
+        generateConfigOption("discordLinking.remote.username", "root");
+        generateConfigOption("discordLinking.remote.password", "changeme");
+        generateConfigOption("discordLinking.remote.database", "bridgecord");
+
         getStringList("blockedKeywords", Arrays.asList("@everyone", "http://", "https://"));
     }
 

@@ -1,11 +1,13 @@
 package net.oldschoolminecraft.bcord.auth;
 
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.org.whoami.authme.AuthMe;
 import uk.org.whoami.authme.cache.auth.PlayerAuth;
 import uk.org.whoami.authme.cache.auth.PlayerCache;
 import uk.org.whoami.authme.datasource.DataSource;
+import uk.org.whoami.authme.security.PasswordSecurity;
 
 import java.lang.reflect.Field;
 
@@ -13,6 +15,7 @@ public class AuthMeHandler implements AuthPluginHandler
 {
     private AuthMe authMe;
     private DataSource database;
+    private PasswordSecurity pws;
 
     public AuthMeHandler()
     {
@@ -20,11 +23,18 @@ public class AuthMeHandler implements AuthPluginHandler
         {
             authMe = (AuthMe) Bukkit.getPluginManager().getPlugin("AuthMe");
             if (authMe == null) return; // not installed, don't attempt setup
+
+            // make database accessible & get a handle
             Field field = authMe.getClass().getDeclaredField("database");
             field.setAccessible(true);
             database = (DataSource) field.get(authMe);
+
+            // make pws accessible & get a handle
+            field = authMe.getClass().getDeclaredField("pws");
+            field.setAccessible(true);
+            pws = (PasswordSecurity) field.get(authMe);
         } catch (Exception ex) {
-            System.out.println("[Bridgecord] Failed to access AuthMe database (not installed?)");
+            System.out.println("[Bridgecord] Reflection failed on AuthMe (not installed?)");
         }
     }
 
@@ -40,6 +50,16 @@ public class AuthMeHandler implements AuthPluginHandler
         if (!isInstalled()) throw new AuthHandlerException("AuthMe is not installed");
         PlayerCache.getInstance().removePlayer(username);
         database.removeAuth(username);
+    }
+
+    @Override
+    public void updatePassword(String username, String newPassword) throws AuthHandlerException
+    {
+        if (!isInstalled()) throw new AuthHandlerException("AuthMe is not installed");
+        if (PlayerCache.getInstance().getAuth(username) == null) throw new AuthHandlerException("Player is not registered");
+        PlayerAuth auth = PlayerCache.getInstance().getAuth(username);
+        auth.setHash(pws.getHash(newPassword));
+        database.updatePassword(auth);
     }
 
     public JavaPlugin getPlugin() throws AuthHandlerException

@@ -4,6 +4,8 @@ import com.johnymuffin.discordcore.DiscordBot;
 import com.oldschoolminecraft.jp.JoinsPlus;
 import com.oldschoolminecraft.vanish.Invisiman;
 import net.oldschoolminecraft.bcord.auth.AuthPluginHandler;
+import net.oldschoolminecraft.bcord.util.PluginConfig;
+import net.oldschoolminecraft.bcord.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
