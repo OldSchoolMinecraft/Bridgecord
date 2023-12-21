@@ -24,6 +24,7 @@ public class PlayerHandler implements Listener
     private static final List<String> blockedKeywords = new ArrayList<>();
 
     private Bridgecord plugin;
+    private final List<String> channelIDs = config.getStringList("bridgeChannelIDs", Collections.emptyList());
 
     public PlayerHandler(Bridgecord plugin)
     {
@@ -45,7 +46,8 @@ public class PlayerHandler implements Listener
                 if (!authHandler.isAuthorized(event.getPlayer().getName())) return;
             }
             String msg = "**<" + event.getPlayer().getName() + ">** " + event.getMessage();
-            Objects.requireNonNull(bot.jda.getTextChannelById(String.valueOf(config.getConfigOption("bridgeChannelID")))).sendMessage(msg).complete();
+            for (String channelID : channelIDs)
+                Objects.requireNonNull(bot.jda.getTextChannelById(channelID)).sendMessage(msg).complete();
         }, 0L);
     }
 
@@ -67,7 +69,8 @@ public class PlayerHandler implements Listener
             }
             if (invisimanInstalled && useInvisiman && invisiman.isVanished(event.getPlayer())) return;
             if (event.getPlayer().hasPermission(hideWithPerm)) return;
-            Objects.requireNonNull(bot.jda.getTextChannelById(String.valueOf(config.getConfigOption("bridgeChannelID")))).sendMessage(Util.stripUnprocessedColor(msg)).complete();
+            for (String channelID : channelIDs)
+                Objects.requireNonNull(bot.jda.getTextChannelById(channelID)).sendMessage(Util.stripUnprocessedColor(msg)).complete();
         }, 0L);
     }
 
@@ -89,7 +92,8 @@ public class PlayerHandler implements Listener
             }
             if (invisimanInstalled && useInvisiman && invisiman.isVanished(event.getPlayer())) return;
             if (event.getPlayer().hasPermission(hideWithPerm)) return;
-            Objects.requireNonNull(bot.jda.getTextChannelById(String.valueOf(config.getConfigOption("bridgeChannelID")))).sendMessage(Util.stripUnprocessedColor(msg)).complete();
+            for (String channelID : channelIDs)
+                Objects.requireNonNull(bot.jda.getTextChannelById(channelID)).sendMessage(Util.stripUnprocessedColor(msg)).complete();
         }, 0L);
     }
 
