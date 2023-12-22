@@ -25,6 +25,10 @@ public class PluginConfig extends Configuration
     {
         getStringList("bridgeChannelIDs", Arrays.asList("FIRST_CHANNEL_ID", "SECOND_CHANNEL_ID", "THIRD_CHANNEL_ID?"));
         generateConfigOption("bridgeMessageFormat", "&8{name}:&f {msg}");
+
+        generateConfigOption("bridgeMessageFormat.shownInGame", "&8{name}:&f {msg}");
+        generateConfigOption("bridgeMessageFormat.shownInDiscord", "**<{name}>** {msg}");
+
         generateConfigOption("hidePlayersWithPermission", "bcord.hidden");
         generateConfigOption("useInvisiman", false);
         generateConfigOption("preventUnauthorizedChats", true);
@@ -41,7 +45,11 @@ public class PluginConfig extends Configuration
         generateConfigOption("commands.reset.enabled", true);
         generateConfigOption("commands.reset.label", "reset");
 
-        generateConfigOption("discordLinking.dataSource", "local");
+        generateConfigOption("commands.auth.enabled", true);
+        generateConfigOption("commands.auth.label", "auth");
+
+        generateConfigOption("discordLinking.dataSource", "remote");
+        generateConfigOption("discordLinking.DISCLAIMER_NOTE", "The dataSource value must be kept at 'remote' until the local data source is properly implemented. Thank you!");
         generateConfigOption("discordLinking.local.dataDirectory", Bridgecord.getInstance().getDataFolder().getAbsolutePath());
         generateConfigOption("discordLinking.remote.host", "127.0.0.1");
         generateConfigOption("discordLinking.remote.port", 3306);

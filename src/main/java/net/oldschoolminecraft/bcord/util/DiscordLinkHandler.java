@@ -28,6 +28,15 @@ public class DiscordLinkHandler
         return dataSource.isDiscordAccountLinked(username);
     }
 
+    public LinkData loadLinkDataByID(String discordID)
+    {
+        if (!sql) return null;
+
+        RemoteDataSource dataSource = (RemoteDataSource) this.dataSource;
+
+        return dataSource.loadDiscordLinkDataByID(discordID);
+    }
+
     public LinkData loadLinkData(String username)
     {
         return dataSource.getDiscordLinkData(username);
@@ -42,7 +51,13 @@ public class DiscordLinkHandler
 
     public boolean completeLinkProcess(String username, String code)
     {
-        return linkRequests.containsKey(username) && linkRequests.get(username).equals(code);
+        boolean complete = linkRequests.containsKey(username) && linkRequests.get(username).equals(code);
+        if (complete)
+        {
+            linkRequests.remove(username);
+            dataSource.linkDiscordAccount(username, code);
+        }
+        return complete;
     }
 
     private String generateCode()

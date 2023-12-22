@@ -7,6 +7,7 @@ import net.oldschoolminecraft.bcord.auth.AuthPluginHandler;
 import net.oldschoolminecraft.bcord.util.PluginConfig;
 import net.oldschoolminecraft.bcord.util.Util;
 import org.bukkit.Bukkit;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerChatEvent;
@@ -45,9 +46,14 @@ public class PlayerHandler implements Listener
                 if (!authHandler.isInstalled()) return;
                 if (!authHandler.isAuthorized(event.getPlayer().getName())) return;
             }
-            String msg = "**<" + event.getPlayer().getName() + ">** " + event.getMessage();
+            String formattedMessage = Util.processMessage(String.valueOf(config.getConfigOption("bridgeMessageFormat.shownInDiscord")), new HashMap<String, String>()
+            {{
+                put("{name}", event.getPlayer().getName());
+                put("{displayName}", event.getPlayer().getDisplayName());
+                put("{msg}", event.getMessage());
+            }});
             for (String channelID : channelIDs)
-                Objects.requireNonNull(bot.jda.getTextChannelById(channelID)).sendMessage(msg).complete();
+                Objects.requireNonNull(bot.jda.getTextChannelById(channelID)).sendMessage(formattedMessage).queue();
         }, 0L);
     }
 
@@ -70,7 +76,7 @@ public class PlayerHandler implements Listener
             if (invisimanInstalled && useInvisiman && invisiman.isVanished(event.getPlayer())) return;
             if (event.getPlayer().hasPermission(hideWithPerm)) return;
             for (String channelID : channelIDs)
-                Objects.requireNonNull(bot.jda.getTextChannelById(channelID)).sendMessage(Util.stripUnprocessedColor(msg)).complete();
+                Objects.requireNonNull(bot.jda.getTextChannelById(channelID)).sendMessage(Util.stripUnprocessedColor(msg)).queue();
         }, 0L);
     }
 
@@ -93,7 +99,7 @@ public class PlayerHandler implements Listener
             if (invisimanInstalled && useInvisiman && invisiman.isVanished(event.getPlayer())) return;
             if (event.getPlayer().hasPermission(hideWithPerm)) return;
             for (String channelID : channelIDs)
-                Objects.requireNonNull(bot.jda.getTextChannelById(channelID)).sendMessage(Util.stripUnprocessedColor(msg)).complete();
+                Objects.requireNonNull(bot.jda.getTextChannelById(channelID)).sendMessage(Util.stripUnprocessedColor(msg)).queue();
         }, 0L);
     }
 

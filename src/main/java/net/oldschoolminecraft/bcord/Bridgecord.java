@@ -57,6 +57,11 @@ public class Bridgecord extends JavaPlugin
         System.out.println("Bridgecord enabled");
     }
 
+    public DiscordLinkHandler getLinkHandler()
+    {
+        return linkHandler;
+    }
+
     public DiscordBot getBot()
     {
         return bot;

@@ -7,6 +7,7 @@ import net.oldschoolminecraft.bcord.auth.xAuthHandler;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 
 public class Util
@@ -55,5 +56,25 @@ public class Util
             chunks.add(part);
         }
         return chunks;
+    }
+
+    public static String generateString(String characters, int length)
+    {
+        char[] text = new char[length];
+        for (int i = 0; i < length; i++) text[i] = characters.charAt(rng.nextInt(characters.length()));
+        return new String(text);
+    }
+
+    public static String generateSecurePassword()
+    {
+        return generateString("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789", 12);
+    }
+
+    public static String processMessage(String message, HashMap<String, String> data)
+    {
+        String pre = message;
+        for (String key : data.keySet())
+            pre = pre.replace(key, data.get(key));
+        return pre;
     }
 }
