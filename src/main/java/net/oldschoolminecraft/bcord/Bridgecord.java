@@ -47,7 +47,7 @@ public class Bridgecord extends JavaPlugin
         else if (dataSourceType.equalsIgnoreCase("remote")) {
             try
             {
-                String url = "mysql://" + config.getConfigOption("discordLinking.remote.host") + ":" + config.getConfigOption("discordLinking.remote.port") + "/" + config.getConfigOption("discordLinking.remote.database");
+                String url = "jdbc:mysql://" + config.getConfigOption("discordLinking.remote.host") + ":" + config.getConfigOption("discordLinking.remote.port") + "/" + config.getConfigOption("discordLinking.remote.database");
                 String user = String.valueOf(config.getConfigOption("discordLinking.remote.username"));
                 String password = String.valueOf(config.getConfigOption("discordLinking.remote.password"));
                 dataSource = new RemoteDataSource(new MySQLConnectionPool(url, user, password));

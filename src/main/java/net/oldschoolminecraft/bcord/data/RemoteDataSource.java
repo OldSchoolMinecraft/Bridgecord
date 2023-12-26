@@ -8,7 +8,7 @@ import java.sql.ResultSet;
 
 public class RemoteDataSource extends AbstractDataSource
 {
-    private MySQLConnectionPool connectionPool;
+    private final MySQLConnectionPool connectionPool;
 
     public RemoteDataSource(MySQLConnectionPool connectionPool)
     {
@@ -24,10 +24,10 @@ public class RemoteDataSource extends AbstractDataSource
             stmt.executeQuery();
             ResultSet rs = stmt.getResultSet();
             if (rs.next())
-                return new LinkData(rs.getString("discordID"), rs.getString("username"), rs.getLong("linkTime"));
+                return new LinkData(rs.getString("discordID"), rs.getString("username"), "N/A", rs.getLong("linkTime"));
             return null;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
             return null;
         }
     }
@@ -40,10 +40,10 @@ public class RemoteDataSource extends AbstractDataSource
             stmt.executeQuery();
             ResultSet rs = stmt.getResultSet();
             if (rs.next())
-                return new LinkData(rs.getString("discordID"), rs.getString("username"), rs.getLong("linkTime"));
+                return new LinkData(rs.getString("discordID"), rs.getString("username"), "N/A", rs.getLong("linkTime"));
             return null;
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
             return null;
         }
     }
@@ -58,7 +58,7 @@ public class RemoteDataSource extends AbstractDataSource
             stmt.setLong(3, System.currentTimeMillis());
             stmt.executeUpdate();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            ex.printStackTrace(System.err);
         }
     }
 }

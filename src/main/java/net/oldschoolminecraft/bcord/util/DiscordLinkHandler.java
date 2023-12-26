@@ -11,7 +11,7 @@ import java.util.Random;
 public class DiscordLinkHandler
 {
     private final Bridgecord plugin;
-    private final HashMap<String, String> linkRequests = new HashMap<>();
+    private final HashMap<String, LinkData> linkRequests = new HashMap<>();
     private final Random random = new Random();
     private AbstractDataSource dataSource;
     private boolean sql;
@@ -43,22 +43,24 @@ public class DiscordLinkHandler
         return dataSource.getDiscordLinkData(username);
     }
 
-    public String startLinkProcess(String username)
+    public String startLinkProcess(String username, String discordID)
     {
         String code = generateCode();
-        linkRequests.put(username, code);
+        linkRequests.put(username, new LinkData(discordID, username, code, System.currentTimeMillis()));
         return code;
     }
 
     public boolean completeLinkProcess(String username, String code)
     {
-        boolean complete = linkRequests.containsKey(username) && linkRequests.get(username).equals(code);
-        if (complete)
+        if (!linkRequests.containsKey(username)) return false;
+        LinkData req = linkRequests.get(username);
+        if (req.linkCode.equals(code))
         {
             linkRequests.remove(username);
-            dataSource.linkDiscordAccount(username, code);
+            dataSource.linkDiscordAccount(username, req.discordID);
+            return true;
         }
-        return complete;
+        return false;
     }
 
     private String generateCode()

@@ -29,7 +29,7 @@ public class PluginConfig extends Configuration
     public void write()
     {
         //TODO: combine channel IDs and messages into object list so each channel can have it's own format (for inter-server chat that use differing formats)
-        getStringList("bridgeChannelIDs", Arrays.asList("FIRST_CHANNEL_ID", "SECOND_CHANNEL_ID", "THIRD_CHANNEL_ID?"));
+        generateConfigOption("bridgeChannelIDs", Arrays.asList("FIRST_CHANNEL_ID", "SECOND_CHANNEL_ID", "THIRD_CHANNEL_ID?"));
         generateConfigOption("bridgeMessageFormat", "&8{name}:&f {msg}");
 
         generateConfigOption("bridgeMessageFormat.shownInGame", "&8{name}:&f {msg}");
@@ -40,18 +40,6 @@ public class PluginConfig extends Configuration
         generateConfigOption("preventUnauthorizedChats", true);
 
         generateConfigOption("commands.prefix", "!");
-
-        generateConfigOption("commands.list.enabled", true);
-        generateConfigOption("commands.list.label", "list");
-
-        generateConfigOption("commands.link.enabled", true);
-        generateConfigOption("commands.link.label", "link");
-
-        generateConfigOption("commands.reset.enabled", true);
-        generateConfigOption("commands.reset.label", "reset");
-
-        generateConfigOption("commands.auth.enabled", true);
-        generateConfigOption("commands.auth.label", "auth");
 
         generateConfigOption("discordLinking.dataSource", "remote");
         generateConfigOption("discordLinking.DISCLAIMER_NOTE", "The dataSource value must be kept at 'remote' until the local data source is properly implemented. Thank you!");

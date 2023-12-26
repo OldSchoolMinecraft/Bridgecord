@@ -4,6 +4,7 @@ author: moderator_man
 main: net.oldschoolminecraft.bcord.Bridgecord
 depend:
   - DiscordCore
-softdepend:
-  - JoinsPlus
-  - Invisiman
+softdepend: [AuthMe, xAuth, OSAS, JoinsPlus, Invisiman]
+commands:
+  dlink:
+    description: Link your Discord account to your in-game account. It's cool!

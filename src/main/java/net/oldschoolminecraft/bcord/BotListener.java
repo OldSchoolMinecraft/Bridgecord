@@ -64,7 +64,7 @@ public class BotListener extends ListenerAdapter
             return;
         }
 
-        if (linkConf.isEnabled() && event.getMessage().getContentStripped().equalsIgnoreCase(cmdPrefix + linkConf.getLabel()))
+        if (linkConf.isEnabled() && event.getMessage().getContentStripped().startsWith(cmdPrefix + linkConf.getLabel()))
         {
             String[] args = event.getMessage().getContentStripped().split(" ");
 
@@ -83,9 +83,11 @@ public class BotListener extends ListenerAdapter
                 return;
             }
 
-            String code = linkHandler.startLinkProcess(targetLinkName);
+            String code = linkHandler.startLinkProcess(targetLinkName, event.getAuthor().getId());
 
+            event.getMessage().reply("Success! We have dispatched a Direct Message.").queue();
             queueDM(event.getAuthor(), "You have successfully initiated the linking process! Please connect to the server with the username you provided (`" + targetLinkName + "`), and enter the following into the chat: `/dlink " + code + "`.\r\rIf the username shown in this message is not correct (and exact, it's case-sensitive!), please try linking again with the correct username.");
+            return;
         }
 
         if (resetConf.isEnabled() && event.getMessage().getContentStripped().equalsIgnoreCase(cmdPrefix + resetConf.getLabel()))
@@ -106,6 +108,7 @@ public class BotListener extends ListenerAdapter
                 return;
             }
 
+            event.getMessage().reply("Success! We have dispatched a Direct Message.").queue();
             queueDM(event.getAuthor(), "Your in-game account has been updated with a new randomly generated password: `" + newPassword + "`. While we do not store these passwords, it is still recommended that you change it to something else. For added security, a password manager is encouraged (but not *required*).");
             return;
         }
@@ -184,8 +187,6 @@ public class BotListener extends ListenerAdapter
             return;
         }
     }
-
-
 
     private void queueDM(User user, String message)
     {

@@ -2,15 +2,13 @@ package net.oldschoolminecraft.bcord.util;
 
 public class BotCommandConfig
 {
-    private PluginConfig config;
-    private boolean enabled;
-    private String label;
+    private final boolean enabled;
+    private final String label;
 
     public BotCommandConfig(PluginConfig config, String key)
     {
-        this.config = config;
-        enabled = (boolean) config.getConfigOption("commands." + key + ".enabled");
-        label = String.valueOf(config.getConfigOption("commands." + key + ".label"));
+        enabled = (boolean) config.getConfigOption("commands." + key + ".enabled", true);
+        label = String.valueOf(config.getConfigOption("commands." + key + ".label", key));
     }
 
     public boolean isEnabled()

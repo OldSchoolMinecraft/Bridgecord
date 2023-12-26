@@ -40,7 +40,7 @@ public class LocalDataSource extends AbstractDataSource
         {
             File file = new File(sourceDir, "discord/" + username + ".json");
             file.getParentFile().mkdirs();
-            gson.toJson(new LinkData(username, discordID, System.currentTimeMillis()), new FileWriter(file));
+            gson.toJson(new LinkData(username, discordID, "N/A", System.currentTimeMillis()), new FileWriter(file));
         } catch (IOException e) {
             e.printStackTrace();
         }
