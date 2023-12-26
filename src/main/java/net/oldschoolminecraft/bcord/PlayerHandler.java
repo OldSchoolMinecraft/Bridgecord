@@ -2,6 +2,7 @@ package net.oldschoolminecraft.bcord;
 
 import com.johnymuffin.discordcore.DiscordBot;
 import com.oldschoolminecraft.jp.JoinsPlus;
+import com.oldschoolminecraft.jp.Message;
 import com.oldschoolminecraft.vanish.Invisiman;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.oldschoolminecraft.bcord.auth.AuthPluginHandler;
@@ -79,10 +80,15 @@ public class PlayerHandler implements Listener
             boolean invisimanInstalled = invisiman != null;
             String hideWithPerm = String.valueOf(config.getConfigOption("hidePlayersWithPermission"));
             String msg = "*__" + event.getPlayer().getName() + "__ has connected*";
+
             if (jp != null)
             {
-                msg = "*" + jp.loadMessage(event.getPlayer().getName()).join + "*";
-                msg = msg.replace("%player%", "__" + event.getPlayer().getName() + "__");
+                Message jpMessage = jp.loadMessage(event.getPlayer().getName());
+                if (jpMessage != null)
+                {
+                    msg = "*" + jpMessage.join + "*";
+                    msg = msg.replace("%player%", "__" + event.getPlayer().getName() + "__");
+                }
             }
             if (invisimanInstalled && useInvisiman && invisiman.isVanished(event.getPlayer())) return;
             if (event.getPlayer().hasPermission(hideWithPerm)) return;
@@ -103,8 +109,12 @@ public class PlayerHandler implements Listener
             String msg = "*__" + event.getPlayer().getName() + "__ has disconnected*";
             if (jp != null)
             {
-                msg = "*" + jp.loadMessage(event.getPlayer().getName()).quit + "*";
-                msg = msg.replace("%player%", "__" + event.getPlayer().getName() + "__");
+                Message jpMessage = jp.loadMessage(event.getPlayer().getName());
+                if (jpMessage != null)
+                {
+                    msg = "*" + jpMessage.quit + "*";
+                    msg = msg.replace("%player%", "__" + event.getPlayer().getName() + "__");
+                }
             }
             if (invisimanInstalled && useInvisiman && invisiman.isVanished(event.getPlayer())) return;
             if (event.getPlayer().hasPermission(hideWithPerm)) return;
