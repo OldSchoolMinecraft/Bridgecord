@@ -5,13 +5,12 @@ import net.oldschoolminecraft.bcord.auth.AuthPluginHandler;
 import net.oldschoolminecraft.bcord.auth.OSASHandler;
 import net.oldschoolminecraft.bcord.auth.xAuthHandler;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Util
 {
+    private static Random rng = new Random();
+
     private static final List<AuthPluginHandler> SUPPORTED_AUTH_HANDLERS = new ArrayList<>();
 
     static

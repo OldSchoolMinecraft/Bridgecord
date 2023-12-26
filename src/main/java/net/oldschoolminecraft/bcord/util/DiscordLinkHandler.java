@@ -3,6 +3,7 @@ package net.oldschoolminecraft.bcord.util;
 import net.oldschoolminecraft.bcord.Bridgecord;
 import net.oldschoolminecraft.bcord.data.AbstractDataSource;
 import net.oldschoolminecraft.bcord.data.RemoteDataSource;
+import org.apache.commons.lang3.NotImplementedException;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -30,7 +31,7 @@ public class DiscordLinkHandler
 
     public LinkData loadLinkDataByID(String discordID)
     {
-        if (!sql) return null;
+        if (!sql) throw new NotImplementedException("Bridgecord does not currently support local data sources. Sorry!");
 
         RemoteDataSource dataSource = (RemoteDataSource) this.dataSource;
 

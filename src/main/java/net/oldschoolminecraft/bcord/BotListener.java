@@ -1,6 +1,7 @@
 package net.oldschoolminecraft.bcord;
 
 import com.oldschoolminecraft.vanish.Invisiman;
+import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
@@ -24,6 +25,7 @@ public class BotListener extends ListenerAdapter
     private final BotCommandConfig linkConf = new BotCommandConfig(config, "link");
     private final BotCommandConfig resetConf = new BotCommandConfig(config, "reset");
     private final BotCommandConfig authConf = new BotCommandConfig(config, "auth");
+    private final BotCommandConfig setNameConf = new BotCommandConfig(config, "setname");
     private final DiscordLinkHandler linkHandler = Bridgecord.getInstance().getLinkHandler();
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event)
@@ -83,7 +85,7 @@ public class BotListener extends ListenerAdapter
 
             String code = linkHandler.startLinkProcess(targetLinkName);
 
-            event.getAuthor().openPrivateChannel().flatMap(channel -> channel.sendMessage("You have successfully initiated the linking process! Please connect to the server with the username you provided (`" + targetLinkName + "`), and enter the following into the chat: `/dlink " + code + "`.\r\rIf the username shown in this message is not correct (and exact, it's case-sensitive!), please try linking again with the correct username.")).queue();
+            queueDM(event.getAuthor(), "You have successfully initiated the linking process! Please connect to the server with the username you provided (`" + targetLinkName + "`), and enter the following into the chat: `/dlink " + code + "`.\r\rIf the username shown in this message is not correct (and exact, it's case-sensitive!), please try linking again with the correct username.");
         }
 
         if (resetConf.isEnabled() && event.getMessage().getContentStripped().equalsIgnoreCase(cmdPrefix + resetConf.getLabel()))
@@ -104,7 +106,7 @@ public class BotListener extends ListenerAdapter
                 return;
             }
 
-            event.getAuthor().openPrivateChannel().flatMap(channel -> channel.sendMessage("Your in-game account has been updated with a new randomly generated password: `" + newPassword + "`. While we do not store these passwords, it is still recommended that you change it to something else. For added security, a password manager is encouraged (but not *required*).")).queue();
+            queueDM(event.getAuthor(), "Your in-game account has been updated with a new randomly generated password: `" + newPassword + "`. While we do not store these passwords, it is still recommended that you change it to something else. For added security, a password manager is encouraged (but not *required*).");
             return;
         }
 
@@ -138,11 +140,34 @@ public class BotListener extends ListenerAdapter
             return;
         }
 
+        if (setNameConf.isEnabled() && event.getMessage().getContentStripped().equalsIgnoreCase(cmdPrefix + setNameConf.getLabel()))
+        {
+            boolean notImplemented = true;
+            if (notImplemented)
+            {
+                event.getMessage().reply("This command is not yet implemented. Sorry!").queue();
+                return;
+            }
+
+            LinkData data = linkHandler.loadLinkDataByID(event.getAuthor().getId());
+            if (data == null)
+            {
+                event.getMessage().reply("Your account is not linked! Please use `" + cmdPrefix + linkConf.getLabel() + "` first!").queue();
+                return;
+            }
+
+            //TODO: create or update record with new display name
+            //TODO: cache data for 45 minutes in memory
+        }
+
         List<String> channelIDs = config.getStringList("bridgeChannelIDs", Collections.emptyList());
         // read bridge messages from all configured channel IDs
         if (channelIDs.contains(event.getChannel().getId())) //if (event.getChannel().getId().equals(String.valueOf(config.getConfigOption("bridgeChannelID"))))
         {
             ArrayList<String> msgChunks = new ArrayList<>();
+
+            //TODO: check if user has custom display name, and process accordingly -- check color role config & validate
+
             String pre = Util.processMessage(ChatColor.translateAlternateColorCodes('&', String.valueOf(config.getConfigOption("bridgeMessageFormat.shownInGame"))), new HashMap<String, String>()
             {{
                 put("{name}", event.getAuthor().getName());
@@ -160,18 +185,10 @@ public class BotListener extends ListenerAdapter
         }
     }
 
-    private void deliverMessage(String message)
+
+
+    private void queueDM(User user, String message)
     {
-        List<String> channelIDs = config.getStringList("bridgeChannelIDs", Collections.emptyList());
-        for (String channelID : channelIDs)
-        {
-            TextChannel channel = Bridgecord.getInstance().getBot().jda.getTextChannelById(channelID);
-            if (channel == null)
-            {
-                System.out.println("[Bridgecord] Failed to get JDA handle for text channel: " + channelID);
-                continue;
-            }
-            Objects.requireNonNull(channel).sendMessage(message).queue();
-        }
+        user.openPrivateChannel().flatMap(channel -> channel.sendMessage(message)).queue();
     }
 }

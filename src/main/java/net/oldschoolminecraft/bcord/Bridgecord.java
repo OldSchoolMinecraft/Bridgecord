@@ -2,12 +2,18 @@ package net.oldschoolminecraft.bcord;
 
 import com.johnymuffin.discordcore.DiscordBot;
 import com.johnymuffin.discordcore.DiscordCore;
+import com.oldschoolminecraft.vanish.Invisiman;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.oldschoolminecraft.bcord.data.AbstractDataSource;
 import net.oldschoolminecraft.bcord.data.LocalDataSource;
 import net.oldschoolminecraft.bcord.data.RemoteDataSource;
 import net.oldschoolminecraft.bcord.util.DiscordLinkHandler;
 import net.oldschoolminecraft.bcord.util.MySQLConnectionPool;
 import net.oldschoolminecraft.bcord.util.PluginConfig;
+import org.apache.commons.lang3.NotImplementedException;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -34,7 +40,10 @@ public class Bridgecord extends JavaPlugin
         AbstractDataSource dataSource = null;
         String dataSourceType = String.valueOf(config.getConfigOption("discordLinking.dataSource"));
         if (dataSourceType.equalsIgnoreCase("local"))
-            dataSource = new LocalDataSource(new File(String.valueOf(config.getConfigOption("discordLinking.local.dataDirectory"))));
+        {
+            getServer().getPluginManager().disablePlugin(this);
+            throw new NotImplementedException("Bridgecord does not currently support local data sources. Sorry! (please set discordLinking.dataSource to 'remote')");
+        }
         else if (dataSourceType.equalsIgnoreCase("remote")) {
             try
             {
@@ -53,8 +62,31 @@ public class Bridgecord extends JavaPlugin
 
         bot.jda.addEventListener(new BotListener());
         getServer().getPluginManager().registerEvents(new PlayerHandler(this), this);
+        getCommand("dlink").setExecutor(new LinkCommandHandler());
 
         System.out.println("Bridgecord enabled");
+    }
+
+    private MessageEmbed makeFancyList()
+    {
+        EmbedBuilder eb = new EmbedBuilder().setTitle("Online Players");
+        String hideWithPerm = String.valueOf(config.getConfigOption("hidePlayersWithPermission"));
+        Invisiman invisiman = (Invisiman) Bukkit.getServer().getPluginManager().getPlugin("Invisiman");
+        boolean useInvisiman = (boolean) config.getConfigOption("useInvisiman");
+        boolean invisimanInstalled = invisiman != null;
+        int invisSub = 0;
+        for (Player p : Bukkit.getOnlinePlayers())
+        {
+            boolean playerIsVanished = (!useInvisiman && p.hasPermission(hideWithPerm)) || (useInvisiman && invisimanInstalled && invisiman.isVanished(p));
+            if (!playerIsVanished) eb.appendDescription(p.getName()).appendDescription(", ");
+            else invisSub++;
+        }
+
+        String pre = eb.getDescriptionBuilder().toString().trim();
+        String desc = pre.substring(0, pre.length() - 1);
+        eb.setDescription(desc);
+
+        return eb.build();
     }
 
     public DiscordLinkHandler getLinkHandler()

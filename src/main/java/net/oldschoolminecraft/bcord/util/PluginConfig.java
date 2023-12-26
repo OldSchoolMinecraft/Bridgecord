@@ -1,7 +1,12 @@
 package net.oldschoolminecraft.bcord.util;
 
+import com.oldschoolminecraft.vanish.Invisiman;
 import com.sun.scenario.effect.Brightpass;
+import net.dv8tion.jda.api.EmbedBuilder;
+import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.oldschoolminecraft.bcord.Bridgecord;
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
 
 import java.io.File;
@@ -23,6 +28,7 @@ public class PluginConfig extends Configuration
 
     public void write()
     {
+        //TODO: combine channel IDs and messages into object list so each channel can have it's own format (for inter-server chat that use differing formats)
         getStringList("bridgeChannelIDs", Arrays.asList("FIRST_CHANNEL_ID", "SECOND_CHANNEL_ID", "THIRD_CHANNEL_ID?"));
         generateConfigOption("bridgeMessageFormat", "&8{name}:&f {msg}");
 
@@ -32,7 +38,6 @@ public class PluginConfig extends Configuration
         generateConfigOption("hidePlayersWithPermission", "bcord.hidden");
         generateConfigOption("useInvisiman", false);
         generateConfigOption("preventUnauthorizedChats", true);
-        generateConfigOption("escapeAtSymbols", true);
 
         generateConfigOption("commands.prefix", "!");
 
@@ -56,6 +61,12 @@ public class PluginConfig extends Configuration
         generateConfigOption("discordLinking.remote.username", "root");
         generateConfigOption("discordLinking.remote.password", "changeme");
         generateConfigOption("discordLinking.remote.database", "bridgecord");
+        generateConfigOption("discordLinking.customProfiles.info_note", "This feature allows players to set their bridge name to something other than their Discord name");
+        generateConfigOption("discordLinking.customProfiles.enabled", true);
+        generateConfigOption("discordLinking.customProfiles.useColorRole", false);
+        generateConfigOption("discordLinking.customProfiles.colorRoleID", "INSERT_ROLE_ID_HERE");
+
+        generateConfigOption("listEmbedFormatFile", "fancy_list.json");
 
         getStringList("blockedKeywords", Arrays.asList("@everyone", "http://", "https://"));
     }
