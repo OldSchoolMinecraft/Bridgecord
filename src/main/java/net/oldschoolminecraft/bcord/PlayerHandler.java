@@ -37,7 +37,7 @@ public class PlayerHandler implements Listener
         blockedKeywords.addAll(config.getStringList("blockedKeywords", Collections.singletonList("@everyone")));
     }
 
-    @EventHandler
+    @EventHandler(priority = Event.Priority.Lowest)
     public void onPlayerChat(PlayerChatEvent event)
     {
         scheduler.scheduleAsyncDelayedTask(plugin, () ->
@@ -61,11 +61,11 @@ public class PlayerHandler implements Listener
 
             String formattedMessage = Util.processMessage(String.valueOf(config.getConfigOption("bridgeMessageFormat.shownInDiscord")), new HashMap<String, String>()
             {{
-                put("{name}", event.getPlayer().getName());
-                put("{displayName}", event.getPlayer().getDisplayName());
-                put("{msg}", event.getMessage());
+                put("{name}", Util.stripAllColor(event.getPlayer().getName()));
+                put("{displayName}", Util.stripAllColor(event.getPlayer().getDisplayName()));
+                put("{msg}", Util.stripAllColor(event.getMessage()));
             }});
-            deliverMessage(Util.stripUnprocessedColor(formattedMessage));
+            deliverMessage(formattedMessage);
         }, 0L);
     }
 
@@ -92,7 +92,7 @@ public class PlayerHandler implements Listener
             }
             if (invisimanInstalled && useInvisiman && invisiman.isVanished(event.getPlayer())) return;
             if (event.getPlayer().hasPermission(hideWithPerm)) return;
-            deliverMessage(Util.stripUnprocessedColor(msg));
+            deliverMessage(Util.stripAllColor(msg));
         }, 0L);
     }
 
@@ -118,7 +118,7 @@ public class PlayerHandler implements Listener
             }
             if (invisimanInstalled && useInvisiman && invisiman.isVanished(event.getPlayer())) return;
             if (event.getPlayer().hasPermission(hideWithPerm)) return;
-            deliverMessage(Util.stripUnprocessedColor(msg));
+            deliverMessage(Util.stripAllColor(msg));
         }, 0L);
     }
 

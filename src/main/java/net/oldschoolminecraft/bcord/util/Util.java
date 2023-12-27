@@ -4,6 +4,7 @@ import net.oldschoolminecraft.bcord.auth.AuthMeHandler;
 import net.oldschoolminecraft.bcord.auth.AuthPluginHandler;
 import net.oldschoolminecraft.bcord.auth.OSASHandler;
 import net.oldschoolminecraft.bcord.auth.xAuthHandler;
+import org.bukkit.ChatColor;
 
 import java.util.*;
 
@@ -34,6 +35,11 @@ public class Util
     public static String stripUnprocessedColor(String input)
     {
         return input == null ? null : input.replaceAll("(?i)&[0-F]", "");
+    }
+
+    public static String stripAllColor(String input)
+    {
+        return ChatColor.stripColor(stripUnprocessedColor(input));
     }
 
     public static AuthPluginHandler selectAuthPlugin()

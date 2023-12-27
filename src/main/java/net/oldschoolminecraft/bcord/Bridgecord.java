@@ -6,10 +6,9 @@ import com.oldschoolminecraft.vanish.Invisiman;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.oldschoolminecraft.bcord.data.AbstractDataSource;
-import net.oldschoolminecraft.bcord.data.LocalDataSource;
 import net.oldschoolminecraft.bcord.data.RemoteDataSource;
 import net.oldschoolminecraft.bcord.util.DiscordLinkHandler;
-import net.oldschoolminecraft.bcord.util.MySQLConnectionPool;
+import net.oldschoolminecraft.bcord.util.MySQLConnectionManager;
 import net.oldschoolminecraft.bcord.util.PluginConfig;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bukkit.Bukkit;
@@ -50,7 +49,7 @@ public class Bridgecord extends JavaPlugin
                 String url = "jdbc:mysql://" + config.getConfigOption("discordLinking.remote.host") + ":" + config.getConfigOption("discordLinking.remote.port") + "/" + config.getConfigOption("discordLinking.remote.database");
                 String user = String.valueOf(config.getConfigOption("discordLinking.remote.username"));
                 String password = String.valueOf(config.getConfigOption("discordLinking.remote.password"));
-                dataSource = new RemoteDataSource(new MySQLConnectionPool(url, user, password));
+                dataSource = new RemoteDataSource(new MySQLConnectionManager(url, user, password));
             } catch (Exception ex) {
                 ex.printStackTrace(System.err);
                 System.out.println("[Bridgecord] Failed to load MySQL data source");

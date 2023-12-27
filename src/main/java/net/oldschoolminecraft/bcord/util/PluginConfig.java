@@ -37,6 +37,7 @@ public class PluginConfig extends Configuration
 
         generateConfigOption("hidePlayersWithPermission", "bcord.hidden");
         generateConfigOption("useInvisiman", false);
+        generateConfigOption("usePEXPrefixes", false);
         generateConfigOption("preventUnauthorizedChats", true);
 
         generateConfigOption("commands.prefix", "!");

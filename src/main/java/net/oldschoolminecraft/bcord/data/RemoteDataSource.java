@@ -1,16 +1,16 @@
 package net.oldschoolminecraft.bcord.data;
 
 import net.oldschoolminecraft.bcord.util.LinkData;
-import net.oldschoolminecraft.bcord.util.MySQLConnectionPool;
+import net.oldschoolminecraft.bcord.util.MySQLConnectionManager;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 
 public class RemoteDataSource extends AbstractDataSource
 {
-    private final MySQLConnectionPool connectionPool;
+    private final MySQLConnectionManager connectionPool;
 
-    public RemoteDataSource(MySQLConnectionPool connectionPool)
+    public RemoteDataSource(MySQLConnectionManager connectionPool)
     {
         this.connectionPool = connectionPool;
     }

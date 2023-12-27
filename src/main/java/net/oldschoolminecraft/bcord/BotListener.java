@@ -175,7 +175,7 @@ public class BotListener extends ListenerAdapter
             {{
                 put("{name}", event.getAuthor().getName());
                 put("{displayName}", event.getAuthor().getName());
-                put("{msg}", Util.stripUnprocessedColor(ChatColor.stripColor(event.getMessage().getContentStripped())));
+                put("{msg}", Util.stripAllColor(event.getMessage().getContentStripped()));
             }});
             if (pre.length() <= 128)
                 msgChunks.add(pre);
