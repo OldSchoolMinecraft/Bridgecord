@@ -56,7 +56,7 @@ public class RemoteDataSource extends AbstractDataSource
             stmt.setString(1, username);
             stmt.setString(2, discordID);
             stmt.setLong(3, System.currentTimeMillis());
-            stmt.executeUpdate();
+            stmt.execute();
         } catch (Exception ex) {
             ex.printStackTrace(System.err);
         }

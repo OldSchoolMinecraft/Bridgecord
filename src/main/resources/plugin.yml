@@ -10,3 +10,4 @@ commands:
     description: Link your Discord account to your in-game account. It's cool!
 dependencies:
   - 'c3p0:c3p0:0.9.1.2'
+  - 'com.mysql:mysql-connector-j:8.1.0'

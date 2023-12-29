@@ -17,6 +17,8 @@ public class MySQLConnectionManager
 			cpds.setJdbcUrl(url);
 			cpds.setUser(user);
 			cpds.setPassword(password);
+			cpds.setMaxPoolSize(50);
+			cpds.setMaxStatementsPerConnection(5);
 		} catch (Exception ex) {
 			ex.printStackTrace(System.err);
 		}
@@ -24,6 +26,9 @@ public class MySQLConnectionManager
 
 	public Connection getConnection() throws SQLException
 	{
+		Connection conn = cpds.getConnection();
+		if (isValid(conn) && conn.isValid(5000))
+			return conn;
 		return cpds.getConnection();
 	}
 
