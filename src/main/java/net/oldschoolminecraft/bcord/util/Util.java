@@ -1,9 +1,6 @@
 package net.oldschoolminecraft.bcord.util;
 
-import net.oldschoolminecraft.bcord.auth.AuthMeHandler;
-import net.oldschoolminecraft.bcord.auth.AuthPluginHandler;
-import net.oldschoolminecraft.bcord.auth.OSASHandler;
-import net.oldschoolminecraft.bcord.auth.xAuthHandler;
+import net.oldschoolminecraft.bcord.auth.*;
 import org.bukkit.ChatColor;
 
 import java.util.*;
@@ -44,12 +41,9 @@ public class Util
 
     public static AuthPluginHandler selectAuthPlugin()
     {
-        return SUPPORTED_AUTH_HANDLERS.stream()
-                .filter(AuthPluginHandler::isInstalled)
-                .reduce((first, second) -> {
-                    throw new RuntimeException("Multiple auth plugins are installed. Please remove one of them.");
-                })
-                .orElseThrow(() -> new RuntimeException("No auth plugin is installed."));
+        for (AuthPluginHandler handler : SUPPORTED_AUTH_HANDLERS)
+            if (handler.isInstalled()) return handler;
+        throw new RuntimeException("No supported auth plugins installed");
     }
 
     public static List<String> splitString(String input, int nbrOfChars)
