@@ -40,7 +40,7 @@ public class BotListener extends ListenerAdapter
             {
                 if (Bukkit.getOnlinePlayers().length == 0)
                 {
-                    event.getMessage().reply("Nobody is online :(").queue();
+                    event.getMessage().reply(String.valueOf(config.getConfigOption("serverEmptyMessage"))).queue();
                     return;
                 }
 
@@ -58,7 +58,7 @@ public class BotListener extends ListenerAdapter
                 }
                 if (Bukkit.getOnlinePlayers().length - invisSub < 1)
                 {
-                    event.getMessage().reply("Nobody is online :(").queue();
+                    event.getMessage().reply(String.valueOf(config.getConfigOption("serverEmptyMessage"))).queue();
                     return;
                 }
                 String pre = sb.toString().trim();

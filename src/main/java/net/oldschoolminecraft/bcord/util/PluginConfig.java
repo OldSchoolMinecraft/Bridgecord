@@ -1,12 +1,6 @@
 package net.oldschoolminecraft.bcord.util;
 
-import com.oldschoolminecraft.vanish.Invisiman;
-import com.sun.scenario.effect.Brightpass;
-import net.dv8tion.jda.api.EmbedBuilder;
-import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.oldschoolminecraft.bcord.Bridgecord;
-import org.bukkit.Bukkit;
-import org.bukkit.entity.Player;
 import org.bukkit.util.config.Configuration;
 
 import java.io.File;
@@ -41,6 +35,8 @@ public class PluginConfig extends Configuration
         generateConfigOption("preventUnauthorizedChats", true);
 
         generateConfigOption("commands.prefix", "!");
+
+        generateConfigOption("serverEmptyMessage", "Nobody is online :(");
 
         generateConfigOption("discordLinking.dataSource", "remote");
         generateConfigOption("discordLinking.DISCLAIMER_NOTE", "The dataSource value must be kept at 'remote' until the local data source is properly implemented. Thank you!");
