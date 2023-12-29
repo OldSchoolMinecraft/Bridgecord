@@ -40,7 +40,7 @@ public class BotListener extends ListenerAdapter
             {
                 if (Bukkit.getOnlinePlayers().length == 0)
                 {
-                    event.getMessage().reply(String.valueOf(config.getConfigOption("serverEmptyMessage"))).queue();
+                    respond(event.getMessage(), String.valueOf(config.getConfigOption("serverEmptyMessage")), listConf.shouldReply());
                     return;
                 }
 
@@ -58,11 +58,11 @@ public class BotListener extends ListenerAdapter
                 }
                 if (Bukkit.getOnlinePlayers().length - invisSub < 1)
                 {
-                    event.getMessage().reply(String.valueOf(config.getConfigOption("serverEmptyMessage"))).queue();
+                    respond(event.getMessage(), String.valueOf(config.getConfigOption("serverEmptyMessage")), listConf.shouldReply());
                     return;
                 }
                 String pre = sb.toString().trim();
-                event.getMessage().reply("Online players (" + Math.max(Bukkit.getOnlinePlayers().length - invisSub, 0) + "):\n`" + pre.substring(0, pre.length() - 1) + "`").queue();
+                respond(event.getMessage(), "Online players (" + Math.max(Bukkit.getOnlinePlayers().length - invisSub, 0) + "):\n`" + pre.substring(0, pre.length() - 1) + "`", listConf.shouldReply());
             });
             return;
         }
@@ -75,7 +75,7 @@ public class BotListener extends ListenerAdapter
 
                 if (args.length-1 < 1)
                 {
-                    event.getMessage().reply("You must specify a username! Example: `" + cmdPrefix + linkConf.getLabel() + " ExamplePlayer123`").queue();
+                    respond(event.getMessage(), "You must specify a username! Example: `" + cmdPrefix + linkConf.getLabel() + " ExamplePlayer123`", linkConf.shouldReply());
                     return;
                 }
 
@@ -84,13 +84,13 @@ public class BotListener extends ListenerAdapter
                 LinkData data = linkHandler.loadLinkDataByID(event.getAuthor().getId());
                 if (data != null)
                 {
-                    event.getMessage().reply("You are already linked to `" + data.username + "` on this server :)").queue();
+                    respond(event.getMessage(), "You are already linked to `" + data.username + "` on this server :)", linkConf.shouldReply());
                     return;
                 }
 
                 String code = linkHandler.startLinkProcess(targetLinkName, event.getAuthor().getId());
 
-                event.getMessage().reply("Success! We have dispatched a Direct Message.").queue();
+                respond(event.getMessage(), "Success! We have dispatched a Direct Message.", linkConf.shouldReply());
                 queueDM(event.getAuthor(), "You have successfully initiated the linking process! Please connect to the server with the username you provided (`" + targetLinkName + "`), and enter the following into the chat: `/dlink " + code + "`.\r\rIf the username shown in this message is not correct (and exact, it's case-sensitive!), please try linking again with the correct username.");
             });
             return;
@@ -103,7 +103,7 @@ public class BotListener extends ListenerAdapter
                 LinkData data = linkHandler.loadLinkDataByID(event.getAuthor().getId());
                 if (data == null)
                 {
-                    event.getMessage().reply("Your account is not linked! Please use `" + cmdPrefix + linkConf.getLabel() + "` first!").queue();
+                    respond(event.getMessage(), "Your account is not linked! Please use `" + cmdPrefix + linkConf.getLabel() + "` first!", resetConf.shouldReply());
                     return;
                 }
 
@@ -112,11 +112,11 @@ public class BotListener extends ListenerAdapter
                 {
                     Util.selectAuthPlugin().updatePassword(data.username, newPassword);
                 } catch (AuthHandlerException ex) {
-                    event.getMessage().reply("An unknown error has occurred while attempting to reset your password. Please try again later.").queue();
+                    respond(event.getMessage(), "An unknown error has occurred while attempting to reset your password. Please try again later.", resetConf.shouldReply());
                     return;
                 }
 
-                event.getMessage().reply("Success! We have dispatched a Direct Message.").queue();
+                respond(event.getMessage(), "Success! We have dispatched a Direct Message.", resetConf.shouldReply());
                 queueDM(event.getAuthor(), "Your in-game account has been updated with a new randomly generated password: `" + newPassword + "`. While we do not store these passwords, it is still recommended that you change it to something else. For added security, a password manager is encouraged (but not *required*).");
             });
             return;
@@ -129,7 +129,7 @@ public class BotListener extends ListenerAdapter
                 LinkData data = linkHandler.loadLinkDataByID(event.getAuthor().getId());
                 if (data == null)
                 {
-                    event.getMessage().reply("Your account is not linked! Please use `" + cmdPrefix + linkConf.getLabel() + "` first!").queue();
+                    respond(event.getMessage(), "Your account is not linked! Please use `" + cmdPrefix + linkConf.getLabel() + "` first!", authConf.shouldReply());
                     return;
                 }
 
@@ -139,16 +139,16 @@ public class BotListener extends ListenerAdapter
 
                     if (player == null)
                     {
-                        event.getMessage().reply("You must be connected to the server to use this feature!").queue();
+                        respond(event.getMessage(), "You must be connected to the server to use this feature!", authConf.shouldReply());
                         return;
                     }
 
                     String ip = ((CraftPlayer) player).getHandle().netServerHandler.networkManager.socket.getInetAddress().getHostAddress();
                     Util.selectAuthPlugin().authenticate(data.username, ip);
 
-                    event.getMessage().reply("You have been successfully authorized in-game!").queue();
+                    respond(event.getMessage(), "You have been successfully authorized in-game!", authConf.shouldReply());
                 } catch (AuthHandlerException e) {
-                    event.getMessage().reply("Error: " + e.getMessage()).queue();
+                    respond(event.getMessage(), "Error: " + e.getMessage(), authConf.shouldReply());
                 }
             });
 
@@ -162,14 +162,14 @@ public class BotListener extends ListenerAdapter
                 boolean notImplemented = true;
                 if (notImplemented)
                 {
-                    event.getMessage().reply("This command is not yet implemented. Sorry!").queue();
+                    respond(event.getMessage(), "This command is not yet implemented. Sorry!", setNameConf.shouldReply());
                     return;
                 }
 
                 LinkData data = linkHandler.loadLinkDataByID(event.getAuthor().getId());
                 if (data == null)
                 {
-                    event.getMessage().reply("Your account is not linked! Please use `" + cmdPrefix + linkConf.getLabel() + "` first!").queue();
+                    respond(event.getMessage(), "Your account is not linked! Please use `" + cmdPrefix + linkConf.getLabel() + "` first!", setNameConf.shouldReply());
                     return;
                 }
 
@@ -206,6 +206,13 @@ public class BotListener extends ListenerAdapter
             });
 //            return;
         }
+    }
+
+    private void respond(Message dcMsg, String replyMsg, boolean reply)
+    {
+        if (reply)
+            dcMsg.reply(replyMsg).queue();
+        else dcMsg.getChannel().sendMessage(replyMsg).queue();
     }
 
     private void asyncImmediately(Runnable runnable)
