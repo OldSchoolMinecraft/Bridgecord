@@ -88,10 +88,16 @@ public class BotListener extends ListenerAdapter
                     return;
                 }
 
-                String code = linkHandler.startLinkProcess(targetLinkName, event.getAuthor().getId());
+                try
+                {
+                    String code = linkHandler.startLinkProcess(targetLinkName, event.getAuthor().getId());
 
-                respond(event.getMessage(), "Success! We have dispatched a Direct Message.", linkConf.shouldReply());
-                queueDM(event.getAuthor(), "You have successfully initiated the linking process! Please connect to the server with the username you provided (`" + targetLinkName + "`), and enter the following into the chat: `/dlink " + code + "`.\r\rIf the username shown in this message is not correct (and exact, it's case-sensitive!), please try linking again with the correct username.");
+                    respond(event.getMessage(), "Success! We have dispatched a Direct Message.", linkConf.shouldReply());
+                    queueDM(event.getAuthor(), "You have successfully initiated the linking process! Please connect to the server with the username you provided (`" + targetLinkName + "`), and enter the following into the chat: `/dlink " + code + "`.\r\rIf the username shown in this message is not correct (and exact, it's case-sensitive!), please try linking again with the correct username.");
+                } catch (Exception ex) {
+                    respond(event.getMessage(), "Error: " + ex.getMessage(), linkConf.shouldReply());
+                    ex.printStackTrace(System.err);
+                }
             });
             return;
         }

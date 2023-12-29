@@ -46,6 +46,7 @@ public class PluginConfig extends Configuration
         generateConfigOption("discordLinking.remote.username", "root");
         generateConfigOption("discordLinking.remote.password", "changeme");
         generateConfigOption("discordLinking.remote.database", "bridgecord");
+        generateConfigOption("discordLinking.remote.encoding", "latin1");
         generateConfigOption("discordLinking.customProfiles.info_note", "This feature allows players to set their bridge name to something other than their Discord name");
         generateConfigOption("discordLinking.customProfiles.enabled", true);
         generateConfigOption("discordLinking.customProfiles.useColorRole", false);

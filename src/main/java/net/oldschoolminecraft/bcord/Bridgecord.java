@@ -5,6 +5,8 @@ import com.johnymuffin.discordcore.DiscordCore;
 import com.oldschoolminecraft.vanish.Invisiman;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
+import net.oldschoolminecraft.bcord.cmd.BcordCommand;
+import net.oldschoolminecraft.bcord.cmd.LinkCommandHandler;
 import net.oldschoolminecraft.bcord.data.AbstractDataSource;
 import net.oldschoolminecraft.bcord.data.RemoteDataSource;
 import net.oldschoolminecraft.bcord.util.DiscordLinkHandler;
@@ -36,6 +38,7 @@ public class Bridgecord extends JavaPlugin
         config.reload();
         DiscordCore core = (DiscordCore) getServer().getPluginManager().getPlugin("DiscordCore");
         bot = core.getDiscordBot();
+
         AbstractDataSource dataSource = null;
         String dataSourceType = String.valueOf(config.getConfigOption("discordLinking.dataSource"));
         if (dataSourceType.equalsIgnoreCase("local"))
@@ -46,7 +49,7 @@ public class Bridgecord extends JavaPlugin
         else if (dataSourceType.equalsIgnoreCase("remote")) {
             try
             {
-                String url = "jdbc:mysql://" + config.getConfigOption("discordLinking.remote.host") + ":" + config.getConfigOption("discordLinking.remote.port") + "/" + config.getConfigOption("discordLinking.remote.database");
+                String url = "jdbc:mysql://" + config.getConfigOption("discordLinking.remote.host") + ":" + config.getConfigOption("discordLinking.remote.port") + "/" + config.getConfigOption("discordLinking.remote.database") + "?characterEncoding=" + config.getConfigOption("discordLinking.remote.encoding", "latin1");
                 String user = String.valueOf(config.getConfigOption("discordLinking.remote.username"));
                 String password = String.valueOf(config.getConfigOption("discordLinking.remote.password"));
                 dataSource = new RemoteDataSource(new MySQLConnectionManager(url, user, password));
@@ -61,6 +64,7 @@ public class Bridgecord extends JavaPlugin
 
         bot.jda.addEventListener(new BotListener());
         getServer().getPluginManager().registerEvents(new PlayerHandler(this), this);
+        getCommand("bcord").setExecutor(new BcordCommand());
         getCommand("dlink").setExecutor(new LinkCommandHandler());
 
         System.out.println("Bridgecord enabled");

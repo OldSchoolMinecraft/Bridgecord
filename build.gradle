@@ -14,6 +14,9 @@ dependencies {
     implementation(files("libs/AuthMe.jar"))
     implementation(files("libs/OSAS.jar"))
     implementation(files("libs/xAuth_AP.jar"))
+    implementation(files("libs/evo-core.jar"))
+    implementation(files("libs/PermissionsEx.jar"))
 
-    implementation 'c3p0:c3p0:0.9.1.2'
+    implementation 'commons-pool:commons-pool:1.6'
+    implementation 'commons-dbcp:commons-dbcp:1.4'
 }

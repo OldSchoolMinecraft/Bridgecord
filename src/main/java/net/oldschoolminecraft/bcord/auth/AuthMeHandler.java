@@ -1,11 +1,18 @@
 package net.oldschoolminecraft.bcord.auth;
 
+import com.johnymuffin.beta.evolutioncore.BetaEvolutionsUtils;
+import com.johnymuffin.beta.evolutioncore.EvolutionAPI;
 import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import uk.org.whoami.authme.AuthMe;
 import uk.org.whoami.authme.cache.auth.PlayerAuth;
 import uk.org.whoami.authme.cache.auth.PlayerCache;
+import uk.org.whoami.authme.cache.limbo.LimboCache;
+import uk.org.whoami.authme.cache.limbo.LimboPlayer;
 import uk.org.whoami.authme.datasource.DataSource;
+import uk.org.whoami.authme.datasource.FileDataSource;
+import uk.org.whoami.authme.datasource.MySQLDataSource;
 import uk.org.whoami.authme.security.PasswordSecurity;
 import uk.org.whoami.authme.settings.Settings;
 
@@ -24,6 +31,17 @@ public class AuthMeHandler implements AuthPluginHandler
             authMe = (AuthMe) Bukkit.getPluginManager().getPlugin("AuthMe");
             if (authMe == null) return; // not installed, don't attempt setup
 
+            // make settings accessible & get a handle
+            settings = getSettings();
+
+            if (settings == null)
+            {
+                Bukkit.getPluginManager().enablePlugin(authMe);
+                settings = getSettings();
+                if (settings == null)
+                    throw new AuthHandlerException("Failed to initialize AuthMe module as the settings are uninitialized or irretrievable");
+            }
+
             // make database accessible & get a handle
             database = getDatabase();
 
@@ -33,17 +51,6 @@ public class AuthMeHandler implements AuthPluginHandler
                 database = getDatabase();
                 if (database == null)
                     throw new AuthHandlerException("Failed to initialize AuthMe module as the database is uninitialized or irretrievable");
-            }
-
-            // make pws accessible & get a handle
-            settings = getSettings();
-
-            if (settings == null)
-            {
-                Bukkit.getPluginManager().enablePlugin(authMe);
-                settings = getSettings();
-                if (settings == null)
-                    throw new AuthHandlerException("Failed to initialize AuthMe module as the settings are uninitialized or irretrievable");
             }
         } catch (Exception ex) {
             System.out.println("[Bridgecord] Reflection failed on AuthMe (not installed?)");
@@ -68,8 +75,22 @@ public class AuthMeHandler implements AuthPluginHandler
     public void authenticate(String username, String ip) throws AuthHandlerException
     {
         if (!isInstalled()) throw new AuthHandlerException("AuthMe is not installed");
-        if (!database.isAuthAvailable(username)) throw new AuthHandlerException("User account is not registered"); // prevent unregistered users from bypassing auth
-        PlayerCache.getInstance().addPlayer(new PlayerAuth(username, "Bridgecord", ip, System.currentTimeMillis()));
+        if (!database.isAuthAvailable(username.toLowerCase())) throw new AuthHandlerException("User account is not registered"); // prevent unregistered users from bypassing auth
+        Player player = Bukkit.getPlayer(username);
+        if (player == null) throw new AuthHandlerException("Player is not online!");
+        PlayerAuth auth = database.getAuth(username.toLowerCase());
+        if (auth == null) auth = new PlayerAuth(username.toLowerCase(), "Bridgecord", ip, System.currentTimeMillis());
+        PlayerCache.getInstance().addPlayer(auth);
+        final LimboPlayer limbo = LimboCache.getInstance().getLimboPlayer(username.toLowerCase());
+        if (limbo != null)
+        {
+            player.getInventory().setContents(limbo.getInventory());
+            player.getInventory().setArmorContents(limbo.getArmour());
+            if (Settings.getInstance().isTeleportToSpawnEnabled())
+                player.teleport(limbo.getLoc());
+            Bukkit.getServer().getScheduler().cancelTask(limbo.getTimeoutTaskId());
+            LimboCache.getInstance().deleteLimboPlayer(username.toLowerCase());
+        }
     }
 
     public void deleteAccount(String username) throws AuthHandlerException

@@ -1,13 +1,17 @@
 name: Bridgecord
-version: 1.0
+version: 1.1
 author: moderator_man
 main: net.oldschoolminecraft.bcord.Bridgecord
-depend:
-  - DiscordCore
+depend: [DiscordCore]
 softdepend: [AuthMe, xAuth, OSAS, JoinsPlus, Invisiman]
 commands:
   dlink:
     description: Link your Discord account to your in-game account. It's cool!
+  bcord:
+    description: View version info & reload config
+    default: op
+    permission: bcord.admin
 dependencies:
-  - 'c3p0:c3p0:0.9.1.2'
-  - 'com.mysql:mysql-connector-j:8.1.0'
+  - 'com.mysql:mysql-connector-j:8.2.0'
+  - 'commons-pool:commons-pool:1.6'
+  - 'commons-dbcp:commons-dbcp:1.4'

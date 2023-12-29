@@ -1,24 +1,22 @@
 package net.oldschoolminecraft.bcord.util;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.apache.commons.dbcp.BasicDataSource;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class MySQLConnectionManager
 {
-	private final ComboPooledDataSource cpds = new ComboPooledDataSource();
+	private final BasicDataSource bds = new BasicDataSource();
 
 	public MySQLConnectionManager(String url, String user, String password)
 	{
 		try
 		{
-			cpds.setDriverClass("com.mysql.cj.jdbc.Driver");
-			cpds.setJdbcUrl(url);
-			cpds.setUser(user);
-			cpds.setPassword(password);
-			cpds.setMaxPoolSize(50);
-			cpds.setMaxStatementsPerConnection(5);
+			bds.setDriverClassName("com.mysql.cj.jdbc.Driver");
+			bds.setUrl(url);
+			bds.setUsername(user);
+			bds.setPassword(password);
 		} catch (Exception ex) {
 			ex.printStackTrace(System.err);
 		}
@@ -26,10 +24,10 @@ public class MySQLConnectionManager
 
 	public Connection getConnection() throws SQLException
 	{
-		Connection conn = cpds.getConnection();
+		Connection conn = bds.getConnection();
 		if (isValid(conn) && conn.isValid(5000))
 			return conn;
-		return cpds.getConnection();
+		return bds.getConnection();
 	}
 
 	private boolean isValid(Connection connection) {
