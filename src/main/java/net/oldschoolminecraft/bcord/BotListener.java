@@ -20,9 +20,7 @@ import java.util.*;
 public class BotListener extends ListenerAdapter
 {
     private static final PluginConfig config = Bridgecord.getInstance().getConfig();
-
     private final String cmdPrefix = String.valueOf(config.getConfigOption("commands.prefix"));
-
     private final ArrayList<BotCommand> botCommands = new ArrayList<>();
 
     public BotListener()
@@ -42,6 +40,7 @@ public class BotListener extends ListenerAdapter
         String[] parts = event.getMessage().getContentStripped().split(" ");
         for (BotCommand cmd : botCommands)
         {
+            if (cmd.getConfig().isPrimaryServerOnly() && !event.getGuild().getId().equals(String.valueOf(config.getConfigOption("primaryServerID")))) continue;
             if (cmd.getConfig().isEnabled() && parts[0].equalsIgnoreCase(cmdPrefix + cmd.getConfig().getLabel()))
             {
                 asyncImmediately(() -> cmd.execute(event));

@@ -33,6 +33,7 @@ public class PluginConfig extends Configuration
         generateConfigOption("useInvisiman", false);
         generateConfigOption("usePEXPrefixes", false);
         generateConfigOption("preventUnauthorizedChats", true);
+        generateConfigOption("primaryServerID", "INSERT_SERVER_ID_HERE");
 
         generateConfigOption("commands.prefix", "!");
 
@@ -54,7 +55,7 @@ public class PluginConfig extends Configuration
 
         generateConfigOption("listEmbedFormatFile", "fancy_list.json");
 
-        getStringList("blockedKeywords", Arrays.asList("@everyone", "http://", "https://"));
+        getStringList("blockedKeywords", Arrays.asList("@everyone", "@here", "http://", "https://"));
     }
 
     private void generateConfigOption(String key, Object defaultValue)
