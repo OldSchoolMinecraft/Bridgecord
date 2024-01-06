@@ -10,7 +10,6 @@ public class BotListCommand extends BotCommand
     public BotListCommand()
     {
         super("list");
-        getConfig().setPrimaryServerOnly(false);
     }
 
     @Override
