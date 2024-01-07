@@ -37,15 +37,23 @@ public class BotListener extends ListenerAdapter
         if (event.getAuthor().isSystem()) return;
         if (event.getMessage().isWebhookMessage()) return;
 
-        String[] parts = event.getMessage().getContentStripped().split(" ");
-        for (BotCommand cmd : botCommands)
+        String strippedMsg = event.getMessage().getContentStripped();
+        if (strippedMsg.startsWith(cmdPrefix))
         {
-            if (cmd.getConfig().isPrimaryServerOnly() && !event.getGuild().getId().equals(String.valueOf(config.getConfigOption("primaryServerID")))) continue;
-            if (cmd.getConfig().isEnabled() && parts[0].equalsIgnoreCase(cmdPrefix + cmd.getConfig().getLabel()))
+            boolean hasArgs = strippedMsg.contains(" ");
+            String[] parts = hasArgs ? strippedMsg.split(" ") : new String[] { strippedMsg };
+            for (BotCommand cmd : botCommands)
             {
-                asyncImmediately(() -> cmd.execute(event));
-                return;
+                if (cmd.getConfig().isPrimaryServerOnly() && !event.getGuild().getId().equals(String.valueOf(config.getConfigOption("primaryServerID")))) continue;
+                if (cmd.getConfig().isEnabled() && parts[0].equalsIgnoreCase(cmdPrefix + cmd.getConfig().getLabel()))
+                {
+                    asyncImmediately(() -> cmd.execute(event));
+                    return;
+                }
             }
+
+            respond(event.getMessage(), "No command exists with that name.", true);
+            return;
         }
 
         List<String> channelIDs = config.getStringList("bridgeChannelIDs", Collections.emptyList());
@@ -73,6 +81,13 @@ public class BotListener extends ListenerAdapter
                     msgChunks.forEach(p::sendMessage);
             });
         }
+    }
+
+    public void respond(Message dcMsg, String replyMsg, boolean reply)
+    {
+        if (reply)
+            dcMsg.reply(replyMsg).queue();
+        else dcMsg.getChannel().sendMessage(replyMsg).queue();
     }
 
     private void asyncImmediately(Runnable runnable)
