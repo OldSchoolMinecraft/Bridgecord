@@ -11,6 +11,7 @@ import net.oldschoolminecraft.bcord.data.AbstractDataSource;
 import net.oldschoolminecraft.bcord.data.RemoteDataSource;
 import net.oldschoolminecraft.bcord.util.DiscordLinkHandler;
 import net.oldschoolminecraft.bcord.util.MySQLConnectionManager;
+import net.oldschoolminecraft.bcord.util.PEXUtils;
 import net.oldschoolminecraft.bcord.util.PluginConfig;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bukkit.Bukkit;
@@ -31,6 +32,7 @@ public class Bridgecord extends JavaPlugin
     private PluginConfig config;
     private DiscordBot bot;
     private DiscordLinkHandler linkHandler;
+    private PEXUtils pexUtils;
 
     public void onEnable()
     {
@@ -39,6 +41,11 @@ public class Bridgecord extends JavaPlugin
         config.reload();
         DiscordCore core = (DiscordCore) getServer().getPluginManager().getPlugin("DiscordCore");
         bot = core.getDiscordBot();
+
+        try
+        {
+            pexUtils = new PEXUtils();
+        } catch (NoClassDefFoundError ignored) {}
 
         AbstractDataSource dataSource = null;
         String dataSourceType = String.valueOf(config.getConfigOption("discordLinking.dataSource"));
@@ -117,6 +124,11 @@ public class Bridgecord extends JavaPlugin
     public PluginConfig getConfig()
     {
         return config;
+    }
+
+    public PEXUtils getPexUtils()
+    {
+        return pexUtils;
     }
 
     public void onDisable()

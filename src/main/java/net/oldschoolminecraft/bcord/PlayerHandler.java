@@ -64,6 +64,8 @@ public class PlayerHandler implements Listener
                 put("{name}", Util.stripAllColor(event.getPlayer().getName()));
                 put("{displayName}", Util.stripAllColor(event.getPlayer().getDisplayName()));
                 put("{msg}", Util.stripAllColor(event.getMessage()));
+                put("{group}", plugin.getPexUtils().getFirstGroup(event.getPlayer().getName()));
+                put("{prefix}", plugin.getPexUtils().getWholePrefix(event.getPlayer().getName()));
             }});
             deliverMessage(formattedMessage);
         }, 0L);
