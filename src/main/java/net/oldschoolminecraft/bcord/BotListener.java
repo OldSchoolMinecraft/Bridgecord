@@ -51,9 +51,6 @@ public class BotListener extends ListenerAdapter
                     return;
                 }
             }
-
-            respond(event.getMessage(), "No command exists with that name.", true);
-            return;
         }
 
         List<String> channelIDs = config.getStringList("bridgeChannelIDs", Collections.emptyList());

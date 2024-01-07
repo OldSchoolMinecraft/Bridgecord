@@ -1,6 +1,7 @@
 package net.oldschoolminecraft.bcord.util;
 
 import net.oldschoolminecraft.bcord.Bridgecord;
+import org.bukkit.event.Event;
 import org.bukkit.util.config.Configuration;
 
 import java.io.File;
@@ -34,6 +35,10 @@ public class PluginConfig extends Configuration
         generateConfigOption("usePEXPrefixes", false);
         generateConfigOption("preventUnauthorizedChats", true);
         generateConfigOption("primaryServerID", "INSERT_SERVER_ID_HERE");
+
+        generateConfigOption("priority.useSuperEvents", false);
+        generateConfigOption("priority.eventPriority", Event.Priority.Highest);
+        generateConfigOption("priority.info", "Use these to assist in compatibility with chat formatting & muting plugins");
 
         generateConfigOption("commands.prefix", "!");
 

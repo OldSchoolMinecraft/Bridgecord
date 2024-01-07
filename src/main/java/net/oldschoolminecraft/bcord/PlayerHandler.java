@@ -69,7 +69,7 @@ public class PlayerHandler implements Listener
         }, 0L);
     }
 
-    @EventHandler
+    @EventHandler(priority = Event.Priority.Lowest)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
         scheduler.scheduleAsyncDelayedTask(plugin, () ->
@@ -96,7 +96,7 @@ public class PlayerHandler implements Listener
         }, 0L);
     }
 
-    @EventHandler
+    @EventHandler(priority = Event.Priority.Lowest)
     public void onPlayerQuit(PlayerQuitEvent event)
     {
         scheduler.scheduleAsyncDelayedTask(plugin, () ->

@@ -15,6 +15,7 @@ import net.oldschoolminecraft.bcord.util.PluginConfig;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -63,7 +64,18 @@ public class Bridgecord extends JavaPlugin
         linkHandler = new DiscordLinkHandler(this, dataSource);
 
         bot.jda.addEventListener(new BotListener());
-        getServer().getPluginManager().registerEvents(new PlayerHandler(this), this);
+
+        boolean useSuperEvents = config.getBoolean("priority.useSuperEvents", false);
+        Event.Priority eventPriority = Event.Priority.valueOf(config.getString("priority.eventPriority", "Highest"));
+        PlayerHandler handler = new PlayerHandler(this);
+        if (useSuperEvents)
+            getServer().getPluginManager().registerSuperEvents(handler, this);
+        else {
+            getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, handler, eventPriority, this);
+            getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, handler, eventPriority, this);
+            getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, handler, eventPriority, this);
+        }
+
         getCommand("bcord").setExecutor(new BcordCommand());
         getCommand("dlink").setExecutor(new LinkCommandHandler());
 
