@@ -42,15 +42,36 @@ public class BotListener extends ListenerAdapter
         {
             boolean hasArgs = strippedMsg.contains(" ");
             String[] parts = hasArgs ? strippedMsg.split(" ") : new String[] { strippedMsg };
+            String guildID = event.getGuild().getId();
             for (BotCommand cmd : botCommands)
             {
-                if (cmd.getConfig().isPrimaryServerOnly() && !event.getGuild().getId().equals(String.valueOf(config.getConfigOption("primaryServerID")))) continue;
-                if (cmd.getConfig().isEnabled() && parts[0].equalsIgnoreCase(cmdPrefix + cmd.getConfig().getLabel()))
+                boolean enabled = cmd.getConfig().isEnabled();
+                boolean primaryServerOnly = cmd.getConfig().isPrimaryServerOnly();
+                boolean isFromPrimaryServer = guildID.equals(config.getString("primaryServerID"));
+                String labelMatch = cmdPrefix + cmd.getConfig().getLabel();
+                String label = parts[0];
+
+                if (label.equalsIgnoreCase(labelMatch))
                 {
+                    if (!enabled)
+                    {
+                        System.out.println("[Bridgecord] Discord user attempted to execute a disabled command: " + strippedMsg);
+                        continue;
+                    }
+
+                    if (primaryServerOnly && !isFromPrimaryServer)
+                    {
+                        System.out.println("[Bridgecord] Discord user attempted to execute a primary-only command from a non-primary server: " + strippedMsg);
+                        continue;
+                    }
+
+                    System.out.println("[Bridgecord] Discord user executed bot command: " + strippedMsg);
                     asyncImmediately(() -> cmd.execute(event));
                     return;
                 }
             }
+
+            System.out.println("[Bridgecord] Discord user attempted unknown bot command: " + strippedMsg);
         }
 
         List<String> channelIDs = config.getStringList("bridgeChannelIDs", Collections.emptyList());
