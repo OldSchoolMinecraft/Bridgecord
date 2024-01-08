@@ -58,8 +58,8 @@ public abstract class BridgecordHandler extends PlayerListener
                 put("{msg}", Util.stripAllColor(event.getMessage()));
                 if (config.getBoolean("usePEXPrefixes", false))
                 {
-                    put("{group}", plugin.getPexUtils().getFirstGroup(event.getPlayer().getName()));
-                    put("{prefix}", plugin.getPexUtils().getWholePrefix(event.getPlayer().getName()));
+                    put("{group}", Util.stripAllColor(plugin.getPexUtils().getFirstGroup(event.getPlayer().getName())));
+                    put("{prefix}", Util.stripAllColor(plugin.getPexUtils().getWholePrefix(event.getPlayer().getName())));
                 }
             }});
             deliverMessage(formattedMessage);

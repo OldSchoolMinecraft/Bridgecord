@@ -43,6 +43,17 @@ public class Bridgecord extends JavaPlugin
         instance = this;
         config = new PluginConfig(new File(getDataFolder(), "config.yml"));
         config.reload();
+
+        try
+        {
+            Long.valueOf(config.getString("primaryServerID"));
+        } catch (Exception ex) {
+            System.err.println(">> BRIDGECORD NOT ENABLED <<");
+            System.err.println("You must set the 'primaryServerID' option in the config to a valid long.");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+
         DiscordCore core = (DiscordCore) getServer().getPluginManager().getPlugin("DiscordCore");
         bot = core.getDiscordBot();
 
