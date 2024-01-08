@@ -9,6 +9,9 @@ import net.oldschoolminecraft.bcord.cmd.BcordCommand;
 import net.oldschoolminecraft.bcord.cmd.LinkCommandHandler;
 import net.oldschoolminecraft.bcord.data.AbstractDataSource;
 import net.oldschoolminecraft.bcord.data.RemoteDataSource;
+import net.oldschoolminecraft.bcord.event.BridgecordHandler;
+import net.oldschoolminecraft.bcord.event.BukkitPlayerHandler;
+import net.oldschoolminecraft.bcord.event.PoseidonPlayerHandler;
 import net.oldschoolminecraft.bcord.util.DiscordLinkHandler;
 import net.oldschoolminecraft.bcord.util.MySQLConnectionManager;
 import net.oldschoolminecraft.bcord.util.PEXUtils;
@@ -33,6 +36,7 @@ public class Bridgecord extends JavaPlugin
     private DiscordBot bot;
     private DiscordLinkHandler linkHandler;
     private PEXUtils pexUtils;
+    private BridgecordHandler currentEventHandler;
 
     public void onEnable()
     {
@@ -72,21 +76,27 @@ public class Bridgecord extends JavaPlugin
 
         bot.jda.addEventListener(new BotListener());
 
-        boolean useSuperEvents = config.getBoolean("priority.useSuperEvents", false);
-        Event.Priority eventPriority = Event.Priority.valueOf(config.getString("priority.eventPriority", "Highest"));
-        PlayerHandler handler = new PlayerHandler(this);
-        if (useSuperEvents)
-            getServer().getPluginManager().registerSuperEvents(handler, this);
-        else {
-            getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, handler, eventPriority, this);
-            getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, handler, eventPriority, this);
-            getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, handler, eventPriority, this);
-        }
+        registerEvents();
 
         getCommand("bcord").setExecutor(new BcordCommand());
         getCommand("dlink").setExecutor(new LinkCommandHandler());
 
         System.out.println("Bridgecord enabled");
+    }
+
+    public void registerEvents()
+    {
+        if (currentEventHandler != null) currentEventHandler.disable();
+        boolean useSuperEvents = config.getBoolean("priority.useSuperEvents", false);
+        currentEventHandler = useSuperEvents ? new PoseidonPlayerHandler() : new BukkitPlayerHandler();
+        Event.Priority eventPriority = Event.Priority.valueOf(config.getString("priority.eventPriority", "Highest"));
+        if (useSuperEvents)
+            getServer().getPluginManager().registerSuperEvents(currentEventHandler, this);
+        else {
+            getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, currentEventHandler, eventPriority, this);
+            getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, currentEventHandler, eventPriority, this);
+            getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, currentEventHandler, eventPriority, this);
+        }
     }
 
     private MessageEmbed makeFancyList()

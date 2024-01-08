@@ -3,6 +3,7 @@ package net.oldschoolminecraft.bcord;
 import com.oldschoolminecraft.vanish.Invisiman;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.*;
+import net.dv8tion.jda.api.events.application.GenericApplicationCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.oldschoolminecraft.bcord.auth.AuthHandlerException;
@@ -29,6 +30,36 @@ public class BotListener extends ListenerAdapter
         botCommands.add(new BotLinkCommand());
         botCommands.add(new BotResetCommand());
         botCommands.add(new BotAuthCommand());
+    }
+
+    private String getPlayerList()
+    {
+        String hideWithPerm = String.valueOf(config.getConfigOption("hidePlayersWithPermission"));
+        Invisiman invisiman = (Invisiman) Bukkit.getServer().getPluginManager().getPlugin("Invisiman");
+        boolean useInvisiman = (boolean) config.getConfigOption("useInvisiman");
+        boolean invisimanInstalled = invisiman != null;
+        StringBuilder sb = new StringBuilder();
+        int invisSub = 0;
+        for (Player p : Bukkit.getOnlinePlayers())
+        {
+            boolean playerIsVanished = (!useInvisiman && p.hasPermission(hideWithPerm)) || (useInvisiman && invisimanInstalled && invisiman.isVanished(p));
+            if (!playerIsVanished) sb.append(p.getName()).append(", ");
+            else invisSub++;
+        }
+        String pre = sb.toString().trim();
+        return pre.substring(0, pre.length() - 1);
+    }
+
+    public void onGenericApplicationCommand(@NotNull GenericApplicationCommandEvent event)
+    {
+        if (event.getCommand().getName().equalsIgnoreCase("list"))
+        {
+            MessageEmbed eb = new EmbedBuilder()
+                    .setTitle("Player List")
+                    .setDescription("`" + getPlayerList() + "`")
+                    .setFooter("Bridgecord v" + Bridgecord.getInstance().getDescription().getVersion() + " (Beta)")
+                    .build();
+        }
     }
 
     public void onMessageReceived(@NotNull MessageReceivedEvent event)

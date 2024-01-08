@@ -22,7 +22,8 @@ public class BcordCommand implements CommandExecutor
                 }
 
                 Bridgecord.getInstance().getConfig().reload();
-                sender.sendMessage(ChatColor.GREEN + "Bridgecord configuration reloaded");
+                Bridgecord.getInstance().registerEvents();
+                sender.sendMessage(ChatColor.GREEN + "Bridgecord configuration & event handlers reloaded");
             } else if (args.length == 0) {
                 sender.sendMessage(ChatColor.GRAY + "Bridgecord v" + Bridgecord.getInstance().getDescription().getVersion() + " by " + ChatColor.RED + "moderator_man");
             }
