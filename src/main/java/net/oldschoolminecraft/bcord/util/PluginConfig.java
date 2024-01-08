@@ -37,7 +37,7 @@ public class PluginConfig extends Configuration
         generateConfigOption("primaryServerID", "INSERT_SERVER_ID_HERE");
 
         generateConfigOption("priority.useSuperEvents", false);
-        generateConfigOption("priority.eventPriority", Event.Priority.Highest);
+        generateConfigOption("priority.eventPriority", Event.Priority.Highest.toString());
         generateConfigOption("priority.info", "Use these to assist in compatibility with chat formatting & muting plugins");
 
         generateConfigOption("commands.prefix", "!");
