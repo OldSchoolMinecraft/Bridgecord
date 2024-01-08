@@ -58,9 +58,7 @@ public class PluginConfig extends Configuration
         generateConfigOption("discordLinking.customProfiles.useColorRole", false);
         generateConfigOption("discordLinking.customProfiles.colorRoleID", "INSERT_ROLE_ID_HERE");
 
-        generateConfigOption("listEmbedFormatFile", "fancy_list.json");
-
-        getStringList("blockedKeywords", Arrays.asList("@everyone", "@here", "http://", "https://"));
+        generateConfigOption("blockedKeywords", Arrays.asList("@everyone", "@here", "http://", "https://"));
     }
 
     private void generateConfigOption(String key, Object defaultValue)
