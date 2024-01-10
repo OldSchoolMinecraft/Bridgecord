@@ -12,10 +12,10 @@ import net.oldschoolminecraft.bcord.data.RemoteDataSource;
 import net.oldschoolminecraft.bcord.event.BridgecordHandler;
 import net.oldschoolminecraft.bcord.event.BukkitPlayerHandler;
 import net.oldschoolminecraft.bcord.event.PoseidonPlayerHandler;
-import net.oldschoolminecraft.bcord.util.DiscordLinkHandler;
-import net.oldschoolminecraft.bcord.util.MySQLConnectionManager;
-import net.oldschoolminecraft.bcord.util.PEXUtils;
-import net.oldschoolminecraft.bcord.util.PluginConfig;
+import net.oldschoolminecraft.bcord.hooks.EssUtils;
+import net.oldschoolminecraft.bcord.hooks.OSMPLUtils;
+import net.oldschoolminecraft.bcord.hooks.PEXUtils;
+import net.oldschoolminecraft.bcord.util.*;
 import org.apache.commons.lang3.NotImplementedException;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -36,6 +36,8 @@ public class Bridgecord extends JavaPlugin
     private DiscordBot bot;
     private DiscordLinkHandler linkHandler;
     private PEXUtils pexUtils;
+    private EssUtils essUtils;
+    private OSMPLUtils osmplUtils;
     private BridgecordHandler currentEventHandler;
 
     public void onEnable()
@@ -61,6 +63,16 @@ public class Bridgecord extends JavaPlugin
         {
             pexUtils = new PEXUtils();
         } catch (NoClassDefFoundError ignored) {}
+
+        try
+        {
+            essUtils = new EssUtils();
+        } catch (NoClassDefFoundError ignored) {}
+
+        try
+        {
+            osmplUtils = new OSMPLUtils();
+        } catch (Exception ignored) {}
 
         AbstractDataSource dataSource = null;
         String dataSourceType = String.valueOf(config.getConfigOption("discordLinking.dataSource"));
@@ -150,6 +162,21 @@ public class Bridgecord extends JavaPlugin
     public PEXUtils getPexUtils()
     {
         return pexUtils;
+    }
+
+    public EssUtils getEssUtils()
+    {
+        return essUtils;
+    }
+
+    public OSMPLUtils getOSMPLUtils()
+    {
+        return osmplUtils;
+    }
+
+    public BridgecordHandler getCurrentEventHandler()
+    {
+        return currentEventHandler;
     }
 
     public void onDisable()

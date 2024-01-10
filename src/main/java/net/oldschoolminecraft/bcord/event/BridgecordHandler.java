@@ -7,6 +7,7 @@ import com.oldschoolminecraft.vanish.Invisiman;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.oldschoolminecraft.bcord.Bridgecord;
 import net.oldschoolminecraft.bcord.auth.AuthPluginHandler;
+import net.oldschoolminecraft.bcord.hooks.OSMPLUtils;
 import net.oldschoolminecraft.bcord.util.PluginConfig;
 import net.oldschoolminecraft.bcord.util.Util;
 import org.bukkit.Bukkit;
@@ -30,7 +31,7 @@ public abstract class BridgecordHandler extends PlayerListener
 
     public void onPlayerChat(PlayerChatEvent event)
     {
-        if (DISABLED) return;
+        if (DISABLED || event.isCancelled()) return;
 
         scheduler.scheduleAsyncDelayedTask(plugin, () ->
         {
@@ -49,6 +50,16 @@ public abstract class BridgecordHandler extends PlayerListener
                     event.getPlayer().sendMessage(ChatColor.RED + "Your message contained a blocked keyword, and was not sent to the chat bridge.");
                     return;
                 }
+            }
+
+            if (plugin.getEssUtils().isInstalled() && plugin.getEssUtils().getUser(event.getPlayer().getName()).isMuted())
+                return; // nope.avi
+
+            OSMPLUtils.OSMPLUser osmplUser = plugin.getOSMPLUtils().getUserData(event.getPlayer().getName());
+            if (osmplUser != null && osmplUser.currentMute != null)
+            {
+                event.setCancelled(true);
+                return;
             }
 
             String formattedMessage = Util.processMessage(String.valueOf(config.getConfigOption("bridgeMessageFormat.shownInDiscord")), new HashMap<String, String>()
@@ -117,6 +128,11 @@ public abstract class BridgecordHandler extends PlayerListener
             if (event.getPlayer().hasPermission(hideWithPerm)) return;
             deliverMessage(Util.stripAllColor(msg));
         }, 0L);
+    }
+
+    public void setDisabled(boolean flag)
+    {
+        DISABLED = flag;
     }
 
     public void disable()

@@ -23,16 +23,17 @@ public class PluginConfig extends Configuration
 
     public void write()
     {
-        //TODO: combine channel IDs and messages into object list so each channel can have it's own format (for inter-server chat that use differing formats)
         generateConfigOption("bridgeChannelIDs", Arrays.asList("FIRST_CHANNEL_ID", "SECOND_CHANNEL_ID", "THIRD_CHANNEL_ID?"));
         generateConfigOption("bridgeMessageFormat", "&8{name}:&f {msg}");
 
         generateConfigOption("bridgeMessageFormat.shownInGame", "&8{name}:&f {msg}");
         generateConfigOption("bridgeMessageFormat.shownInDiscord", "**<{name}>** {msg}");
+        //TODO: separate linked & unlinked formats
 
         generateConfigOption("hidePlayersWithPermission", "bcord.hidden");
         generateConfigOption("useInvisiman", false);
         generateConfigOption("usePEXPrefixes", false);
+        generateConfigOption("checkEssentialsMutes", true);
         generateConfigOption("preventUnauthorizedChats", true);
         generateConfigOption("primaryServerID", "INSERT_SERVER_ID_HERE");
 

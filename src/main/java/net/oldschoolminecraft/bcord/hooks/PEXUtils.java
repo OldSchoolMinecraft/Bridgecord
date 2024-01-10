@@ -1,4 +1,4 @@
-package net.oldschoolminecraft.bcord.util;
+package net.oldschoolminecraft.bcord.hooks;
 
 import org.bukkit.Bukkit;
 import ru.tehkode.permissions.PermissionManager;
