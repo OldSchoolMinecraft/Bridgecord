@@ -1,9 +1,23 @@
 plugins {
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'java'
 }
 
 repositories {
     mavenCentral()
+}
+
+shadowJar {
+    exclude 'poseidon.jar'
+    exclude 'botcore.jar'
+    exclude 'Invisiman.jar'
+    exclude 'JoinsPlus.jar'
+    exclude 'AuthMe.jar'
+    exclude 'OSAS.jar'
+    exclude 'xAuth_AP.jar'
+    exclude 'evo-core.jar'
+    exclude 'PermissionsEx.jar'
+    exclude 'Essentials.jar'
 }
 
 dependencies {
@@ -18,6 +32,7 @@ dependencies {
     implementation(files("libs/PermissionsEx.jar"))
     implementation(files("libs/Essentials.jar"))
 
+    implementation 'com.mysql:mysql-connector-j:8.2.0'
     implementation 'commons-pool:commons-pool:1.6'
     implementation 'commons-dbcp:commons-dbcp:1.4'
 }

@@ -25,7 +25,7 @@ public class MySQLConnectionManager
 	public Connection getConnection() throws SQLException
 	{
 		Connection conn = bds.getConnection();
-		if (isValid(conn) && conn.isValid(5000))
+		if (isValid(conn) && conn.isValid(0))
 			return conn;
 		return bds.getConnection();
 	}

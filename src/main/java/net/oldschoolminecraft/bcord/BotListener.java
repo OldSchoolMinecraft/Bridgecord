@@ -115,7 +115,7 @@ public class BotListener extends ListenerAdapter
 
                 //TODO: check if user has custom display name, and process accordingly -- check color role config & validate
 
-                String pre = Util.processMessage(ChatColor.translateAlternateColorCodes('&', String.valueOf(config.getConfigOption("bridgeMessageFormat.shownInGame"))), new HashMap<String, String>()
+                String pre = Util.processMessage(translateAlternateColorCodes('&', String.valueOf(config.getConfigOption("bridgeMessageFormat.shownInGame"))), new HashMap<String, String>()
                 {{
                     put("{name}", event.getAuthor().getName());
                     put("{displayName}", event.getAuthor().getName());
@@ -130,6 +130,20 @@ public class BotListener extends ListenerAdapter
                     msgChunks.forEach(p::sendMessage);
             });
         }
+    }
+
+    private String translateAlternateColorCodes(char altColorChar, String textToTranslate)
+    {
+        char[] b = textToTranslate.toCharArray();
+
+        for(int i = 0; i < b.length - 1; ++i) {
+            if (b[i] == altColorChar && "0123456789AaBbCcDdEeFfKkLlMmNnOoRr".indexOf(b[i + 1]) > -1) {
+                b[i] = 167;
+                b[i + 1] = Character.toLowerCase(b[i + 1]);
+            }
+        }
+
+        return new String(b);
     }
 
     public void respond(Message dcMsg, String replyMsg, boolean reply)

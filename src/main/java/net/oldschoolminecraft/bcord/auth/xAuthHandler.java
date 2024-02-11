@@ -1,5 +1,6 @@
 package net.oldschoolminecraft.bcord.auth;
 
+import com.cypherx.xauth.XAuthPlayerAuthenticationEvent;
 import com.cypherx.xauth.xAuth;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -21,7 +22,12 @@ public class xAuthHandler implements AuthPluginHandler
     {
         if (!isInstalled()) throw new AuthHandlerException("xAuth is not installed");
         if (!xauth.isRegistered(username)) throw new AuthHandlerException("User account is not registered"); // prevent unregistered users from bypassing auth
+
+        if (xAuth.settings.getBool("login.strikes.enabled"))
+            xauth.clearStrikes(Bukkit.getPlayer(username));
         xauth.login(Bukkit.getPlayer(username));
+        XAuthPlayerAuthenticationEvent authPlayerAuthenticationEvent = new XAuthPlayerAuthenticationEvent(Bukkit.getPlayer(username).getUniqueId(), true);
+        Bukkit.getPluginManager().callEvent(authPlayerAuthenticationEvent);
     }
 
     public void deleteAccount(String username) throws AuthHandlerException
