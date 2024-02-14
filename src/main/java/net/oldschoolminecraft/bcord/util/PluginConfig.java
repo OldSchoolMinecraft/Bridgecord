@@ -28,6 +28,8 @@ public class PluginConfig extends Configuration
 
         generateConfigOption("bridgeMessageFormat.shownInGame", "&8{name}:&f {msg}");
         generateConfigOption("bridgeMessageFormat.shownInDiscord", "**<{name}>** {msg}");
+        generateConfigOption("bridgeMessageFormat.statsOnJoinLeave", false);
+        generateConfigOption("bridgeMessageFormat.statsFormat", "**[{online}/{maxPlayers}]**");
         //TODO: separate linked & unlinked formats
 
         generateConfigOption("hidePlayersWithPermission", "bcord.hidden");

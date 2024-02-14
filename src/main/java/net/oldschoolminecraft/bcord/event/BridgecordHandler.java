@@ -92,6 +92,8 @@ public abstract class BridgecordHandler extends PlayerListener
             Invisiman invisiman = (Invisiman) Bukkit.getServer().getPluginManager().getPlugin("Invisiman");
             boolean useInvisiman = (boolean) config.getConfigOption("useInvisiman");
             boolean invisimanInstalled = invisiman != null;
+            boolean statsOnJoinLeave = (boolean) config.getConfigOption("bridgeMessageFormat.statsOnJoinLeave");
+            String statsFormat = String.valueOf(config.getConfigOption("bridgeMessageFormat.statsFormat"));
             String hideWithPerm = String.valueOf(config.getConfigOption("hidePlayersWithPermission"));
             String msg = "*__" + event.getPlayer().getName() + "__ has connected*";
 
@@ -106,6 +108,16 @@ public abstract class BridgecordHandler extends PlayerListener
             }
             if (invisimanInstalled && useInvisiman && invisiman.isVanished(event.getPlayer())) return;
             if (event.getPlayer().hasPermission(hideWithPerm)) return;
+
+            if (statsOnJoinLeave)
+            {
+                msg += " " + Util.processMessage(statsFormat, new HashMap<String, String>()
+                {{
+                    put("{online}", String.valueOf(Bukkit.getOnlinePlayers().length));
+                    put("{maxPlayers}", String.valueOf(Bukkit.getMaxPlayers()));
+                }});
+            }
+
             deliverMessage(Util.stripAllColor(msg));
         }, 0L);
     }
@@ -119,6 +131,8 @@ public abstract class BridgecordHandler extends PlayerListener
             Invisiman invisiman = (Invisiman) Bukkit.getServer().getPluginManager().getPlugin("Invisiman");
             boolean useInvisiman = (boolean) config.getConfigOption("useInvisiman");
             boolean invisimanInstalled = invisiman != null;
+            boolean statsOnJoinLeave = (boolean) config.getConfigOption("bridgeMessageFormat.statsOnJoinLeave");
+            String statsFormat = String.valueOf(config.getConfigOption("bridgeMessageFormat.statsFormat"));
             String hideWithPerm = String.valueOf(config.getConfigOption("hidePlayersWithPermission"));
             String msg = "*__" + event.getPlayer().getName() + "__ has disconnected*";
             if (jp != null)
@@ -132,6 +146,16 @@ public abstract class BridgecordHandler extends PlayerListener
             }
             if (invisimanInstalled && useInvisiman && invisiman.isVanished(event.getPlayer())) return;
             if (event.getPlayer().hasPermission(hideWithPerm)) return;
+
+            if (statsOnJoinLeave)
+            {
+                msg += " " + Util.processMessage(statsFormat, new HashMap<String, String>()
+                {{
+                    put("{online}", String.valueOf(Bukkit.getOnlinePlayers().length - (event.getPlayer().isOnline() ? 1 : 0)));
+                    put("{maxPlayers}", String.valueOf(Bukkit.getMaxPlayers()));
+                }});
+            }
+
             deliverMessage(Util.stripAllColor(msg));
         }, 0L);
     }
