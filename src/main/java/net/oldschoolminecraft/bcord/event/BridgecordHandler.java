@@ -26,42 +26,48 @@ public abstract class BridgecordHandler extends PlayerListener
     private static final DiscordBot bot = Bridgecord.getInstance().getBot();
     private static final PluginConfig config = Bridgecord.getInstance().getConfig();
     private static final BukkitScheduler scheduler = Bukkit.getScheduler();
-    private static final List<String> blockedKeywords = new ArrayList<>();
+    private static List<String> blockedKeywords = new ArrayList<>();
     private boolean DISABLED = false;
+
+    public BridgecordHandler()
+    {
+        blockedKeywords = (ArrayList<String>) config.getConfigOption("blockedKeywords");
+    }
 
     public void onPlayerChat(PlayerChatEvent event)
     {
         if (DISABLED || event.isCancelled()) return;
 
-        scheduler.scheduleAsyncDelayedTask(plugin, () ->
+        boolean preventUnauthorizedChats = (boolean) config.getConfigOption("preventUnauthorizedChats");
+        if (preventUnauthorizedChats)
         {
-            boolean preventUnauthorizedChats = (boolean) config.getConfigOption("preventUnauthorizedChats");
-            if (preventUnauthorizedChats)
-            {
-                AuthPluginHandler authHandler = Util.selectAuthPlugin();
-                if (!authHandler.isInstalled()) return;
-                if (!authHandler.isAuthorized(event.getPlayer().getName())) return;
-            }
+            AuthPluginHandler authHandler = Util.selectAuthPlugin();
+            if (!authHandler.isInstalled()) return;
+            if (!authHandler.isAuthorized(event.getPlayer().getName())) return;
+        }
 
-            for (String keyword : blockedKeywords)
-            {
-                if (event.getMessage().contains(keyword))
-                {
-                    event.getPlayer().sendMessage(ChatColor.RED + "Your message contained a blocked keyword, and was not sent to the chat bridge.");
-                    return;
-                }
-            }
+        if (plugin.getEssUtils().isInstalled() && plugin.getEssUtils().getUser(event.getPlayer().getName()).isMuted())
+            return; // nope.avi
 
-            if (plugin.getEssUtils().isInstalled() && plugin.getEssUtils().getUser(event.getPlayer().getName()).isMuted())
-                return; // nope.avi
+        OSMPLUtils.OSMPLUser osmplUser = plugin.getOSMPLUtils().getUserData(event.getPlayer().getName());
+        if (osmplUser != null && osmplUser.currentMute != null)
+        {
+            event.setCancelled(true);
+            return;
+        }
 
-            OSMPLUtils.OSMPLUser osmplUser = plugin.getOSMPLUtils().getUserData(event.getPlayer().getName());
-            if (osmplUser != null && osmplUser.currentMute != null)
+        for (String keyword : blockedKeywords)
+        {
+            if (event.getMessage().contains(keyword))
             {
                 event.setCancelled(true);
+                event.getPlayer().sendMessage(ChatColor.RED + "Your message contains a blocked keyword!");
                 return;
             }
+        }
 
+        scheduler.scheduleAsyncDelayedTask(plugin, () ->
+        {
             String formattedMessage = Util.processMessage(String.valueOf(config.getConfigOption("bridgeMessageFormat.shownInDiscord")), new HashMap<String, String>()
             {{
                 put("{name}", Util.stripAllColor(event.getPlayer().getName()));
