@@ -19,7 +19,7 @@ public class BotLinkCommand extends BotCommand
 
         if (args.length-1 < 1)
         {
-            respond(event.getMessage(), "You must specify a username! Example: `" + config.getConfigOption("commands.prefix") + getConfig().getLabel() + " ExamplePlayer123`", getConfig().shouldReply());
+            respond(event.getMessage(), "You must specify a username! Example: `" + cmdPrefix + getConfig().getLabel() + " ExamplePlayer123`", getConfig().shouldReply());
             return;
         }
 

@@ -1,5 +1,7 @@
 package net.oldschoolminecraft.bcord.event;
 
+import com.earth2me.essentials.User;
+import com.earth2me.essentials.UserData;
 import com.johnymuffin.discordcore.DiscordBot;
 import com.oldschoolminecraft.jp.JoinsPlus;
 import com.oldschoolminecraft.jp.Message;
@@ -7,6 +9,7 @@ import com.oldschoolminecraft.vanish.Invisiman;
 import net.dv8tion.jda.api.entities.TextChannel;
 import net.oldschoolminecraft.bcord.Bridgecord;
 import net.oldschoolminecraft.bcord.auth.AuthPluginHandler;
+import net.oldschoolminecraft.bcord.hooks.EssUtils;
 import net.oldschoolminecraft.bcord.hooks.OSMPLUtils;
 import net.oldschoolminecraft.bcord.util.PluginConfig;
 import net.oldschoolminecraft.bcord.util.Util;
@@ -17,6 +20,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.scheduler.BukkitScheduler;
+import ru.tehkode.permissions.bukkit.PermissionsEx;
 
 import java.util.*;
 
@@ -51,10 +55,7 @@ public abstract class BridgecordHandler extends PlayerListener
 
         OSMPLUtils.OSMPLUser osmplUser = plugin.getOSMPLUtils().getUserData(event.getPlayer().getName());
         if (osmplUser != null && osmplUser.currentMute != null)
-        {
-            event.setCancelled(true);
-            return;
-        }
+            return; // nope.avi
 
         for (String keyword : blockedKeywords)
         {
@@ -120,6 +121,19 @@ public abstract class BridgecordHandler extends PlayerListener
 
             deliverMessage(Util.stripAllColor(msg));
         }, 0L);
+
+        scheduler.scheduleAsyncDelayedTask(plugin, () ->
+        {
+            if (plugin.getEssUtils().isInstalled())
+            {
+                User user = plugin.getEssUtils().getUser(event.getPlayer().getName());
+                boolean isGodOn = user.isGodModeEnabled();
+                boolean isAllowed = event.getPlayer().hasPermission("essentials.god") || event.getPlayer().isOp();
+                boolean finalFlag = (isGodOn && isAllowed);
+                user.setGodModeEnabled(finalFlag);
+                if (config.getBoolean("dev.debug", false)) event.getPlayer().sendMessage(ChatColor.RED + "God mode: " + (finalFlag ? (ChatColor.GREEN + "ON") : "OFF"));
+            }
+        });
     }
     public void onPlayerQuit(PlayerQuitEvent event)
     {

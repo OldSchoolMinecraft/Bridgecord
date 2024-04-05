@@ -24,7 +24,7 @@ public class BotAuthCommand extends BotCommand
         LinkData data = linkHandler.loadLinkDataByID(event.getAuthor().getId());
         if (data == null)
         {
-            respond(event.getMessage(), "Your account is not linked! Please use `" + cmdPrefix + config.getString("commands.auth.label") + "` first!", getConfig().shouldReply());
+            respond(event.getMessage(), "Your account is not linked! Please use `" + cmdPrefix + config.getString("commands.link.label") + "` first!", getConfig().shouldReply());
             return;
         }
 

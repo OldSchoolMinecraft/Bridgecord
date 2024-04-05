@@ -10,12 +10,14 @@ public class PEXUtils
 {
     private PermissionManager permissionsManager;
     private boolean hooked = false;
+    private PermissionsEx pex;
 
     public PEXUtils()
     {
         try
         {
-            PermissionsEx pex = (PermissionsEx) Bukkit.getServer().getPluginManager().getPlugin("PermissionsEx");
+            pex = (PermissionsEx) Bukkit.getServer().getPluginManager().getPlugin("PermissionsEx");
+            if (!isInstalled()) return;
             Field field = pex.getClass().getDeclaredField("permissionsManager");
             field.setAccessible(true);
             permissionsManager = (PermissionManager) field.get(pex);
@@ -23,6 +25,11 @@ public class PEXUtils
         } catch (NoClassDefFoundError | Exception ex) {
             System.out.println("[Bridgecord] Failed to hook PermissionsEx");
         }
+    }
+
+    public boolean isInstalled()
+    {
+        return pex != null;
     }
 
     public String getFirstGroup(String username)
