@@ -37,8 +37,9 @@ public class BotLinkCommand extends BotCommand
         {
             String code = linkHandler.startLinkProcess(targetLinkName, event.getAuthor().getId());
 
-            respond(event.getMessage(), "Success! We have dispatched a Direct Message.", getConfig().shouldReply());
-            queueDM(event.getAuthor(), "You have successfully initiated the linking process! Please connect to the server with the username you provided (`" + targetLinkName + "`), and enter the following into the chat: `/dlink " + code + "`.\r\rIf the username shown in this message is not correct (and exact, it's case-sensitive!), please try linking again with the correct username.");
+            queueDM(event.getAuthor(), "You have successfully initiated the linking process! Please connect to the server with the username you provided (`" + targetLinkName + "`), and enter the following into the chat: `/dlink " + code + "`.\r\rIf the username shown in this message is not correct (and exact, it's case-sensitive!), please try linking again with the correct username.",
+                (message) -> respond(event.getMessage(), "Success! We have dispatched a Direct Message.", getConfig().shouldReply()),
+                (error) -> respond(event.getMessage(), "Error! We were not able to DM you :(", getConfig().shouldReply()));
         } catch (Exception ex) {
             respond(event.getMessage(), "Error: " + ex.getMessage(), getConfig().shouldReply());
             ex.printStackTrace(System.err);

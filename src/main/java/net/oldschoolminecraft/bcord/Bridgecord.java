@@ -7,6 +7,7 @@ import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.oldschoolminecraft.bcord.cmd.BcordCommand;
 import net.oldschoolminecraft.bcord.cmd.LinkCommandHandler;
+import net.oldschoolminecraft.bcord.cmd.bot.BotListener;
 import net.oldschoolminecraft.bcord.data.AbstractDataSource;
 import net.oldschoolminecraft.bcord.data.RemoteDataSource;
 import net.oldschoolminecraft.bcord.event.BridgecordHandler;

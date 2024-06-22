@@ -1,4 +1,4 @@
-package net.oldschoolminecraft.bcord;
+package net.oldschoolminecraft.bcord.cmd.bot;
 
 import com.oldschoolminecraft.vanish.Invisiman;
 import net.dv8tion.jda.api.EmbedBuilder;
@@ -6,6 +6,7 @@ import net.dv8tion.jda.api.entities.*;
 import net.dv8tion.jda.api.events.application.GenericApplicationCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
+import net.oldschoolminecraft.bcord.Bridgecord;
 import net.oldschoolminecraft.bcord.auth.AuthHandlerException;
 import net.oldschoolminecraft.bcord.cmd.bot.*;
 import net.oldschoolminecraft.bcord.data.RemoteDataSource;
@@ -30,6 +31,7 @@ public class BotListener extends ListenerAdapter
         botCommands.add(new BotLinkCommand());
         botCommands.add(new BotResetCommand());
         botCommands.add(new BotAuthCommand());
+        botCommands.add(new BotMFACommand());
     }
 
     private String getPlayerList()

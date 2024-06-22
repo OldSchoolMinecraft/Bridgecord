@@ -44,6 +44,9 @@ public class PluginConfig extends Configuration
         generateConfigOption("priority.info", "Use these to assist in compatibility with chat formatting & muting plugins");
 
         generateConfigOption("commands.prefix", "!");
+        generateConfigOption("commands.link.label", "link");
+        generateConfigOption("commands.auth.label", "auth");
+        generateConfigOption("commands.reset.label", "reset");
 
         generateConfigOption("serverEmptyMessage", "Nobody is online :(");
 

@@ -20,6 +20,7 @@ public class LinkCommandHandler implements CommandExecutor
                 if (args.length < 1)
                 {
                     sender.sendMessage(ChatColor.RED + "Insufficient arguments: Usage: /dlink <code>");
+                    sender.sendMessage(ChatColor.RED + "To get a code, use the Discord command: " + ChatColor.GRAY + "!link <username>");
                     return;
                 }
 

@@ -34,7 +34,8 @@ public class BotResetCommand extends BotCommand
             return;
         }
 
-        respond(event.getMessage(), "Success! We have dispatched a Direct Message.", getConfig().shouldReply());
-        queueDM(event.getAuthor(), "Your in-game account has been updated with a new randomly generated password: `" + newPassword + "`. While we do not store these passwords, it is still recommended that you change it to something else. For added security, a password manager is encouraged (but not *required*).");
+        queueDM(event.getAuthor(), "Your in-game account has been updated with a new randomly generated password: `" + newPassword + "`. While we do not store these passwords, it is still recommended that you change it to something else. For added security, a password manager is encouraged (but not *required*).",
+            (message) -> respond(event.getMessage(), "Success! We have dispatched a Direct Message.", getConfig().shouldReply()),
+            (error) -> respond(event.getMessage(), "Error! We were not able to DM you :(", getConfig().shouldReply()));
     }
 }

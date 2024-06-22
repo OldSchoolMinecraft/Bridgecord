@@ -1,5 +1,5 @@
 name: Bridgecord
-version: 1.2
+version: 1.3
 author: moderator_man
 main: net.oldschoolminecraft.bcord.Bridgecord
 depend: [DiscordCore]
@@ -11,7 +11,7 @@ commands:
     description: View version info & reload config
     default: op
     permission: bcord.admin
-dependencies:
+dependencies: #-- UNCOMMENT THESE LINES IF YOU ARE NOT COMPILING WITH SHADOW
   - 'com.mysql:mysql-connector-j:8.2.0'
-  - 'commons-pool:commons-pool:1.6'
-  - 'commons-dbcp:commons-dbcp:1.4'
+  - 'org.apache.commons:commons-pool2:2.12.0'
+  - 'org.apache.commons:commons-dbcp2:2.12.0'
