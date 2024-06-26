@@ -67,6 +67,17 @@ public abstract class BridgecordHandler extends PlayerListener
             }
         }
 
+        String hackyRegex = config.getString("hackyRegexFix");
+        boolean hackyRegexFix = (hackyRegex != null);
+
+        if (hackyRegexFix)
+        {
+            long numColons = countOccurrences(event.getMessage(), ':');
+            String pre = numColons > 1 ? event.getMessage().replaceFirst(":", "") : event.getMessage();
+            String message = pre.replaceAll(hackyRegex, "");
+            event.setMessage(message);
+        }
+
         scheduler.scheduleAsyncDelayedTask(plugin, () ->
         {
             String formattedMessage = Util.processMessage(String.valueOf(config.getConfigOption("bridgeMessageFormat.shownInDiscord")), new HashMap<String, String>()
@@ -182,6 +193,16 @@ public abstract class BridgecordHandler extends PlayerListener
     public void disable()
     {
         DISABLED = true;
+    }
+
+    public boolean isDisabled()
+    {
+        return DISABLED;
+    }
+
+    private long countOccurrences(String str, char target)
+    {
+        return str.chars().filter(ch -> ch == target).count();
     }
 
     private void deliverMessage(String message)

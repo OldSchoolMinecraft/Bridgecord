@@ -38,6 +38,7 @@ public class PluginConfig extends Configuration
         generateConfigOption("checkEssentialsMutes", true);
         generateConfigOption("preventUnauthorizedChats", true);
         generateConfigOption("primaryServerID", "INSERT_SERVER_ID_HERE");
+        generateConfigOption("hackyRegexFix", "\\[\\w+(?:\\. \\w+)?\\] \\w+§r§r: ");
 
         generateConfigOption("priority.useSuperEvents", false);
         generateConfigOption("priority.eventPriority", Event.Priority.Highest.toString());
