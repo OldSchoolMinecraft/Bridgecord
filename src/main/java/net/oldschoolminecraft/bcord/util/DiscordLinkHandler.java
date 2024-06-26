@@ -63,6 +63,11 @@ public class DiscordLinkHandler
         return false;
     }
 
+    public AbstractDataSource getDataSource()
+    {
+        return dataSource;
+    }
+
     private String generateCode()
     {
         return String.format("%06d", random.nextInt(999999));

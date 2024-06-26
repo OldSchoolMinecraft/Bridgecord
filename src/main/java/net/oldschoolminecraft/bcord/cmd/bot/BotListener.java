@@ -27,11 +27,22 @@ public class BotListener extends ListenerAdapter
 
     public BotListener()
     {
+        reloadCommands();
+    }
+
+    public void reloadCommands()
+    {
+        boolean linkingFeaturesEnabled = config.getBoolean("discordLinking.enabled", true);
+
+        botCommands.clear();
         botCommands.add(new BotListCommand());
-        botCommands.add(new BotLinkCommand());
-        botCommands.add(new BotResetCommand());
-        botCommands.add(new BotAuthCommand());
-        botCommands.add(new BotMFACommand());
+        if (linkingFeaturesEnabled)
+        {
+            botCommands.add(new BotLinkCommand());
+            botCommands.add(new BotResetCommand());
+            botCommands.add(new BotAuthCommand());
+            // botCommands.add(new BotMFACommand());
+        }
     }
 
     private String getPlayerList()

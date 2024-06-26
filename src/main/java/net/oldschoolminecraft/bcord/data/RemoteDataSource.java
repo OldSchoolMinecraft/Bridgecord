@@ -80,4 +80,15 @@ public class RemoteDataSource extends AbstractDataSource
             e.printStackTrace(System.err);
         }
     }
+
+    @Override
+    public void shutdown()
+    {
+        try
+        {
+            connectionPool.shutdown();
+        } catch (SQLException e) {
+            e.printStackTrace(System.err);
+        }
+    }
 }

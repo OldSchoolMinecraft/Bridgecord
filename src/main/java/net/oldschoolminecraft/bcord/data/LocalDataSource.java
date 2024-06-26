@@ -45,4 +45,7 @@ public class LocalDataSource extends AbstractDataSource
             e.printStackTrace();
         }
     }
+
+    @Override
+    public void shutdown() {}
 }

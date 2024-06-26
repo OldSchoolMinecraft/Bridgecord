@@ -52,6 +52,7 @@ public class PluginConfig extends Configuration
         generateConfigOption("serverEmptyMessage", "Nobody is online :(");
 
         generateConfigOption("discordLinking.dataSource", "remote");
+        generateConfigOption("discordLinking.enabled", true);
         generateConfigOption("discordLinking.DISCLAIMER_NOTE", "The dataSource value must be kept at 'remote' until the local data source is properly implemented. Thank you!");
         generateConfigOption("discordLinking.local.dataDirectory", Bridgecord.getInstance().getDataFolder().getAbsolutePath());
         generateConfigOption("discordLinking.remote.host", "127.0.0.1");

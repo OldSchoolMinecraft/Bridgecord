@@ -1,5 +1,5 @@
 name: Bridgecord
-version: 1.3
+version: 1.4
 author: moderator_man
 main: net.oldschoolminecraft.bcord.Bridgecord
 depend: [DiscordCore]
@@ -13,5 +13,6 @@ commands:
     permission: bcord.admin
 dependencies: #-- UNCOMMENT THESE LINES IF YOU ARE NOT COMPILING WITH SHADOW
   - 'com.mysql:mysql-connector-j:8.2.0'
-  - 'org.apache.commons:commons-pool2:2.12.0'
-  - 'org.apache.commons:commons-dbcp2:2.12.0'
+#  - 'commons-logging:commons-logging:1.3.2'
+#  - 'org.apache.commons:commons-pool2:2.12.0'
+#  - 'org.apache.commons:commons-dbcp2:2.12.0'

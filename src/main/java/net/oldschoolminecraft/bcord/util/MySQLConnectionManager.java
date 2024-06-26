@@ -1,22 +1,23 @@
 package net.oldschoolminecraft.bcord.util;
 
-import org.apache.commons.dbcp2.BasicDataSource;
-
 import java.sql.Connection;
 import java.sql.SQLException;
 
 public class MySQLConnectionManager
 {
-	private final BasicDataSource bds = new BasicDataSource();
+	private SimpleConnectionPool scp;
 
 	public MySQLConnectionManager(String url, String user, String password)
 	{
 		try
 		{
-			bds.setDriverClassName("com.mysql.cj.jdbc.Driver");
-			bds.setUrl(url);
-			bds.setUsername(user);
-			bds.setPassword(password);
+			scp = SimpleConnectionPool.create(url, user, password, 10);
+
+//			bds.setLogWriter(new PrintWriter(System.out));
+//			bds.setDriverClassName("com.mysql.cj.jdbc.Driver");
+//			bds.setUrl(url);
+//			bds.setUsername(user);
+//			bds.setPassword(password);
 		} catch (Exception ex) {
 			ex.printStackTrace(System.err);
 		}
@@ -24,10 +25,15 @@ public class MySQLConnectionManager
 
 	public Connection getConnection() throws SQLException
 	{
-		Connection conn = bds.getConnection();
+		Connection conn = scp.getConnection();
 		if (isValid(conn) && conn.isValid(0))
 			return conn;
-		return bds.getConnection();
+		return scp.getConnection();
+	}
+
+	public void shutdown() throws SQLException
+	{
+		scp.shutdown();
 	}
 
 	private boolean isValid(Connection connection) {

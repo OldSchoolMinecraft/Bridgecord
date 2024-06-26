@@ -10,6 +10,7 @@ public abstract class AbstractDataSource implements DataSource
 {
     protected abstract LinkData loadDiscordLinkData(String username);
     public abstract void linkDiscordAccount(String username, String discordID);
+    public abstract void shutdown();
 
     public boolean isDiscordAccountLinked(String username)
     {

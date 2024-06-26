@@ -40,6 +40,7 @@ public class Bridgecord extends JavaPlugin
     private EssUtils essUtils;
     private OSMPLUtils osmplUtils;
     private BridgecordHandler currentEventHandler;
+    private BotListener botListener;
 
     public void onEnable()
     {
@@ -98,7 +99,8 @@ public class Bridgecord extends JavaPlugin
         }
         linkHandler = new DiscordLinkHandler(this, dataSource);
 
-        bot.jda.addEventListener(new BotListener());
+        this.botListener = new BotListener();
+        bot.jda.addEventListener(botListener);
 
         registerEvents();
 
@@ -180,8 +182,14 @@ public class Bridgecord extends JavaPlugin
         return currentEventHandler;
     }
 
+    public BotListener getBotListener()
+    {
+        return botListener;
+    }
+
     public void onDisable()
     {
+        linkHandler.getDataSource().shutdown();
         System.out.println("Bridgecord disabled");
     }
 }
