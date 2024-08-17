@@ -3,6 +3,7 @@ package net.oldschoolminecraft.bcord.event;
 import com.earth2me.essentials.User;
 import com.earth2me.essentials.UserData;
 import com.johnymuffin.discordcore.DiscordBot;
+import com.legacyminecraft.poseidon.event.PlayerDeathEvent;
 import com.oldschoolminecraft.jp.JoinsPlus;
 import com.oldschoolminecraft.jp.Message;
 import com.oldschoolminecraft.vanish.Invisiman;
@@ -201,6 +202,13 @@ public abstract class BridgecordHandler extends PlayerListener
 
             deliverMessage(Util.stripAllColor(msg));
         }, 0L);
+    }
+
+    public void onPlayerDeath(PlayerDeathEvent event)
+    {
+        if (DISABLED) return;
+        if (!config.getBoolean("deathMessagesOnBridge", true)) return;
+        deliverMessage("__*" + event.getDeathMessage() + "*__");
     }
 
     public void setDisabled(boolean flag)
