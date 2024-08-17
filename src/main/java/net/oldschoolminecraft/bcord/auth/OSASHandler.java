@@ -60,6 +60,11 @@ public class OSASHandler implements AuthPluginHandler
         return osas.fallbackManager.isAuthenticated(username.toLowerCase());
     }
 
+    public boolean isRegistered(String username)
+    {
+        return osas.fallbackManager.isRegistered(username.toLowerCase());
+    }
+
     public boolean isInstalled()
     {
         return osas != null;

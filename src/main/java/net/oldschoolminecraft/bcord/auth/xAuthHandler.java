@@ -63,6 +63,11 @@ public class xAuthHandler implements AuthPluginHandler
         return xauth.isLoggedIn(Bukkit.getPlayer(username));
     }
 
+    public boolean isRegistered(String username)
+    {
+        return xauth.isRegistered(username);
+    }
+
     public boolean isInstalled()
     {
         return xauth != null;

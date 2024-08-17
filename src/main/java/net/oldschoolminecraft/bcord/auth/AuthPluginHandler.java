@@ -9,5 +9,6 @@ public interface AuthPluginHandler
     void updatePassword(String username, String newPassword) throws AuthHandlerException;
     JavaPlugin getPlugin() throws AuthHandlerException;
     boolean isAuthorized(String username);
+    boolean isRegistered(String username);
     boolean isInstalled();
 }

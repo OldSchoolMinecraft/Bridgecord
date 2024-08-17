@@ -125,6 +125,11 @@ public class AuthMeHandler implements AuthPluginHandler
         return PlayerCache.getInstance().isAuthenticated(username);
     }
 
+    public boolean isRegistered(String username)
+    {
+        return PlayerCache.getInstance().getAuth(username) != null;
+    }
+
     public boolean isInstalled()
     {
         return authMe != null;
