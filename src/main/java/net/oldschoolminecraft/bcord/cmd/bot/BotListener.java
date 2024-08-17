@@ -7,13 +7,9 @@ import net.dv8tion.jda.api.events.application.GenericApplicationCommandEvent;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.api.hooks.ListenerAdapter;
 import net.oldschoolminecraft.bcord.Bridgecord;
-import net.oldschoolminecraft.bcord.auth.AuthHandlerException;
-import net.oldschoolminecraft.bcord.cmd.bot.*;
-import net.oldschoolminecraft.bcord.data.RemoteDataSource;
+import net.oldschoolminecraft.bcord.cmd.StaffLockCommand;
 import net.oldschoolminecraft.bcord.util.*;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
@@ -41,6 +37,7 @@ public class BotListener extends ListenerAdapter
             botCommands.add(new BotLinkCommand());
             botCommands.add(new BotResetCommand());
             botCommands.add(new BotAuthCommand());
+            botCommands.add(new BotStaffLockCommand());
             // botCommands.add(new BotMFACommand());
         }
     }

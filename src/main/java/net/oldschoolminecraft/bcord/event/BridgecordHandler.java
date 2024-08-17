@@ -12,16 +12,17 @@ import net.oldschoolminecraft.bcord.auth.AuthPluginHandler;
 import net.oldschoolminecraft.bcord.hooks.EssUtils;
 import net.oldschoolminecraft.bcord.hooks.OSMPLUtils;
 import net.oldschoolminecraft.bcord.util.PluginConfig;
+import net.oldschoolminecraft.bcord.util.StaffLockHandler;
 import net.oldschoolminecraft.bcord.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.event.player.PlayerChatEvent;
-import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerListener;
-import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.entity.Player;
+import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitScheduler;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
 
+import java.io.File;
 import java.util.*;
 
 public abstract class BridgecordHandler extends PlayerListener
@@ -94,6 +95,23 @@ public abstract class BridgecordHandler extends PlayerListener
             deliverMessage(formattedMessage);
         }, 0L);
     }
+
+    public void onPlayerPreLogin(PlayerPreLoginEvent event)
+    {
+        if (DISABLED) return;
+
+        File slock = new File(Bridgecord.getInstance().getDataFolder(), event.getName().toLowerCase() + ".slock");
+        if (slock.exists())
+        {
+            if (!StaffLockHandler.getInstance().isUnlocked(event.getName()))
+            {
+                event.cancelPlayerLogin(ChatColor.RED + "This account is currently locked.");
+                return;
+            }
+            event.allow();
+        }
+    }
+
     public void onPlayerJoin(PlayerJoinEvent event)
     {
         if (DISABLED) return;
