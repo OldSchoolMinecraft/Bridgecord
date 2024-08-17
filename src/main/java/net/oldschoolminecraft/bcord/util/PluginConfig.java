@@ -32,6 +32,7 @@ public class PluginConfig extends Configuration
         generateConfigOption("bridgeMessageFormat.statsFormat", "**[{online}/{maxPlayers}]**");
         //TODO: separate linked & unlinked formats
 
+        generateConfigOption("staffRoleID", "INSERT_STAFF_ROLE_ID_HERE");
         generateConfigOption("deathMessagesOnBridge", true);
         generateConfigOption("hidePlayersWithPermission", "bcord.hidden");
         generateConfigOption("useInvisiman", false);
