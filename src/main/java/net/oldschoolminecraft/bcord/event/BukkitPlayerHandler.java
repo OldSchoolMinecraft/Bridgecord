@@ -1,5 +1,6 @@
 package net.oldschoolminecraft.bcord.event;
 
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
@@ -19,5 +20,10 @@ public class BukkitPlayerHandler extends BridgecordHandler
     public void onPlayerQuit(PlayerQuitEvent event)
     {
         super.onPlayerQuit(event);
+    }
+
+    public void onEntityDeath(EntityDeathEvent event)
+    {
+        super.onEntityDeath(event);
     }
 }
