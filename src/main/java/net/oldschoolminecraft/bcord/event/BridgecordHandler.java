@@ -18,6 +18,7 @@ import net.oldschoolminecraft.bcord.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.*;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
@@ -201,11 +202,9 @@ public abstract class BridgecordHandler extends PlayerListener
 
         Player player = (Player) event.getEntity();
 
-        // Get the last damage cause
         EntityDamageEvent lastDamage = player.getLastDamageCause();
         String preDeathMessage = ChatColor.RED + player.getName() + " met an unfortunate end!";
 
-        // Customize the message based on the damage cause
         if (lastDamage != null)
         {
             switch (lastDamage.getCause())
@@ -221,8 +220,8 @@ public abstract class BridgecordHandler extends PlayerListener
                     break;
                 case ENTITY_ATTACK:
                     Entity attacker = lastDamage.getEntity();
-                    if (attacker instanceof Player)
-                        preDeathMessage = player.getName() + " was killed by " + ((Player)attacker).getName();
+                    if (attacker instanceof CraftPlayer)
+                        preDeathMessage = player.getName() + " was murdered by " + ((CraftPlayer)attacker).getName();
                     else if (attacker instanceof org.bukkit.entity.Monster)
                         preDeathMessage = player.getName() + " was killed by a " + getEntityTypeName(attacker);
                     break;
@@ -236,7 +235,7 @@ public abstract class BridgecordHandler extends PlayerListener
                     preDeathMessage = player.getName() + " was killed by lightning!";
                     break;
                 case PROJECTILE:
-                    preDeathMessage = player.getName() + " was killed by a " + getEntityTypeName(player.getLastDamageCause().getEntity());
+                    preDeathMessage = player.getName() + " was shot by " + getEntityTypeName(player.getLastDamageCause().getEntity());
                 default:
                     break;
             }
@@ -262,11 +261,28 @@ public abstract class BridgecordHandler extends PlayerListener
             return "monster";
         }
         if (entity instanceof Snowball)
-            return "Snowball";
+        {
+            Snowball snowball = (Snowball) entity;
+            if (snowball.getShooter() != null && snowball.getShooter() instanceof CraftPlayer)
+                return "a snowball from " + ((CraftPlayer)snowball.getShooter()).getName();
+            return "a stray snowball";
+        }
         if (entity instanceof Arrow)
-            return "Arrow";
+        {
+            Arrow arrow = (Arrow) entity;
+            if (arrow.getShooter() != null && arrow.getShooter() instanceof CraftPlayer)
+                return "an arrow from " + ((CraftPlayer)arrow.getShooter()).getName();
+            return "a stray arrow";
+        }
         if (entity instanceof Fireball)
-            return "Fireball";
+        {
+            Fireball fireball = (Fireball)entity;
+            if (fireball.getShooter() instanceof Ghast)
+                return "a Ghast's fireball";
+            return "a stray fireball";
+        }
+        if (entity instanceof CraftPlayer)
+            return ((CraftPlayer)entity).getName();
         return entity.getClass().getSimpleName();
     }
 
