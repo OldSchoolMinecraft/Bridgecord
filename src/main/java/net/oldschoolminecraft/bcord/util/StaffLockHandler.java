@@ -1,5 +1,8 @@
 package net.oldschoolminecraft.bcord.util;
 
+import net.oldschoolminecraft.bcord.Bridgecord;
+
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -34,5 +37,10 @@ public class StaffLockHandler
             if (name.equalsIgnoreCase(username))
                 return true;
         return false;
+    }
+
+    public boolean hasLock(String username)
+    {
+        return new File(Bridgecord.getInstance().getDataFolder(), username.toLowerCase() + ".slock").exists();
     }
 }
