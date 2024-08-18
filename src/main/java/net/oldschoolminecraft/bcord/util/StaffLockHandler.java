@@ -6,7 +6,7 @@ import java.util.TimerTask;
 
 public class StaffLockHandler
 {
-    private static StaffLockHandler instance;
+    private static final StaffLockHandler instance = new StaffLockHandler();
 
     public static StaffLockHandler getInstance()
     {
