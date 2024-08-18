@@ -18,7 +18,9 @@ import net.oldschoolminecraft.bcord.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitScheduler;
 import ru.tehkode.permissions.bukkit.PermissionsEx;
@@ -69,32 +71,19 @@ public abstract class BridgecordHandler extends PlayerListener
             }
         }
 
-        String hackyRegex = config.getString("hackyRegexFix");
-        boolean hackyRegexFix = (hackyRegex != null);
+        String formattedMessage = Util.processMessage(String.valueOf(config.getConfigOption("bridgeMessageFormat.shownInDiscord")), new HashMap<String, String>()
+        {{
+            put("{name}", Util.stripAllColor(event.getPlayer().getName()));
+            put("{displayName}", Util.stripAllColor(event.getPlayer().getDisplayName()));
+            put("{msg}", Util.stripAllColor(event.getMessage()));
+            if (config.getBoolean("usePEXPrefixes", false))
+            {
+                put("{group}", Util.stripAllColor(plugin.getPexUtils().getFirstGroup(event.getPlayer().getName())));
+                put("{prefix}", Util.stripAllColor(plugin.getPexUtils().getWholePrefix(event.getPlayer().getName())));
+            }
+        }});
 
-        if (hackyRegexFix)
-        {
-            long numColons = countOccurrences(event.getMessage(), ':');
-            String pre = numColons > 1 ? event.getMessage().replaceFirst(":", "") : event.getMessage();
-            String message = pre.replaceAll(hackyRegex, "");
-            event.setMessage(message);
-        }
-
-        scheduler.scheduleAsyncDelayedTask(plugin, () ->
-        {
-            String formattedMessage = Util.processMessage(String.valueOf(config.getConfigOption("bridgeMessageFormat.shownInDiscord")), new HashMap<String, String>()
-            {{
-                put("{name}", Util.stripAllColor(event.getPlayer().getName()));
-                put("{displayName}", Util.stripAllColor(event.getPlayer().getDisplayName()));
-                put("{msg}", Util.stripAllColor(event.getMessage()));
-                if (config.getBoolean("usePEXPrefixes", false))
-                {
-                    put("{group}", Util.stripAllColor(plugin.getPexUtils().getFirstGroup(event.getPlayer().getName())));
-                    put("{prefix}", Util.stripAllColor(plugin.getPexUtils().getWholePrefix(event.getPlayer().getName())));
-                }
-            }});
-            deliverMessage(formattedMessage);
-        }, 0L);
+        scheduler.scheduleAsyncDelayedTask(plugin, () -> deliverMessage(formattedMessage), 0L);
     }
 
     public void onPlayerPreLogin(PlayerPreLoginEvent event)
@@ -204,11 +193,81 @@ public abstract class BridgecordHandler extends PlayerListener
         }, 0L);
     }
 
-    public void onPlayerDeath(PlayerDeathEvent event)
+    public void onEntityDeath(EntityDeathEvent event)
     {
         if (DISABLED) return;
         if (!config.getBoolean("deathMessagesOnBridge", true)) return;
-        deliverMessage("__*" + event.getDeathMessage() + "*__");
+        if (!(event.getEntity() instanceof Player)) return;
+
+        Player player = (Player) event.getEntity();
+
+        // Get the last damage cause
+        EntityDamageEvent lastDamage = player.getLastDamageCause();
+        String preDeathMessage = ChatColor.RED + player.getName() + " met an unfortunate end!";
+
+        // Customize the message based on the damage cause
+        if (lastDamage != null)
+        {
+            switch (lastDamage.getCause())
+            {
+                case FALL:
+                    preDeathMessage = player.getName() + " fell to their demise!";
+                    break;
+                case LAVA:
+                    preDeathMessage = player.getName() + " tried to swim in lava!";
+                    break;
+                case DROWNING:
+                    preDeathMessage = player.getName() + " forgot how to swim!";
+                    break;
+                case ENTITY_ATTACK:
+                    Entity attacker = lastDamage.getEntity();
+                    if (attacker instanceof Player)
+                        preDeathMessage = player.getName() + " was killed by " + ((Player)attacker).getName();
+                    else if (attacker instanceof org.bukkit.entity.Monster)
+                        preDeathMessage = player.getName() + " was killed by a " + getEntityTypeName(attacker);
+                    break;
+                case SUICIDE:
+                    preDeathMessage = player.getName() + " took their own life!";
+                    break;
+                case SUFFOCATION:
+                    preDeathMessage = player.getName() + " suffocated!";
+                    break;
+                case LIGHTNING:
+                    preDeathMessage = player.getName() + " was killed by lightning!";
+                    break;
+                case PROJECTILE:
+                    preDeathMessage = player.getName() + " was killed by a " + getEntityTypeName(player.getLastDamageCause().getEntity());
+                default:
+                    break;
+            }
+        }
+
+        deliverMessage("__*" + preDeathMessage + "*__");
+    }
+
+    public String getEntityTypeName(Entity entity)
+    {
+        if (entity instanceof Monster)
+        {
+            if (entity instanceof Zombie)
+            {
+                return "Zombie";
+            } else if (entity instanceof Skeleton) {
+                return "Skeleton";
+            } else if (entity instanceof Creeper) {
+                return "Creeper";
+            } else if (entity instanceof Spider) {
+                return "Spider";
+            }
+            return "monster";
+        }
+        if (entity instanceof Snowball)
+            return "Snowball";
+        if (entity instanceof Arrow)
+            return "Arrow";
+        if (entity instanceof Fireball)
+            return "Fireball";
+        return entity.getClass().getSimpleName();
     }
 
     public void setDisabled(boolean flag)
