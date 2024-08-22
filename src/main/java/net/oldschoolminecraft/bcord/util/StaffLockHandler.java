@@ -1,6 +1,7 @@
 package net.oldschoolminecraft.bcord.util;
 
 import net.oldschoolminecraft.bcord.Bridgecord;
+import org.bukkit.Bukkit;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -26,6 +27,12 @@ public class StaffLockHandler
             @Override
             public void run()
             {
+                // if the player is online, reset the timer without re-locking
+                if (Bukkit.getOfflinePlayer(username).isOnline())
+                {
+                    timer.schedule(this, 1000L * 60L * 5L);
+                    return;
+                }
                 unlocked.remove(username);
             }
         }, 1000L * 60L * 5L); // 5 minute authorization TODO: add configuration option
