@@ -194,6 +194,8 @@ public abstract class BridgecordHandler extends PlayerListener
         }, 0L);
     }
 
+    private HashMap<String, Integer> lastHealthMap = new HashMap<>();
+
     public void onEntityDamage(EntityDamageEvent event)
     {
         if (DISABLED) return;
@@ -206,7 +208,11 @@ public abstract class BridgecordHandler extends PlayerListener
         int oldHealth = player.getHealth();
         int newHealth = oldHealth - damage;
 
+        lastHealthMap.put(player.getName(), newHealth);
+
         if (newHealth > 0) return; // didn't die
+        if (lastHealthMap.containsKey(player.getName()) && lastHealthMap.get(player.getName()) <= 0)
+            return; // they're already dead
 
         String preDeathMessage = player.getName() + " met an unfortunate end!";
 
