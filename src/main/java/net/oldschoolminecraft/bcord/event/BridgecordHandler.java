@@ -202,7 +202,7 @@ public abstract class BridgecordHandler extends PlayerListener
         Player player = (Player) event.getEntity();
 
         EntityDamageEvent lastDamage = player.getLastDamageCause();
-        String preDeathMessage = ChatColor.RED + player.getName() + " met an unfortunate end!";
+        String preDeathMessage = player.getName() + " met an unfortunate end!";
 
         if (lastDamage != null)
         {
@@ -217,12 +217,15 @@ public abstract class BridgecordHandler extends PlayerListener
                 case DROWNING:
                     preDeathMessage = player.getName() + " forgot how to swim!";
                     break;
+                case CONTACT:
+                    preDeathMessage = player.getName() + " died from contact";
+                    break;
                 case ENTITY_ATTACK:
                     Entity attacker = lastDamage.getEntity();
+                    if (attacker instanceof Monster)
+                        preDeathMessage = player.getName() + " was killed by a " + getEntityTypeName(attacker);
                     if (attacker instanceof CraftPlayer)
                         preDeathMessage = player.getName() + " was murdered by " + ((CraftPlayer)attacker).getName();
-                    else if (attacker instanceof org.bukkit.entity.Monster)
-                        preDeathMessage = player.getName() + " was killed by a " + getEntityTypeName(attacker);
                     break;
                 case SUICIDE:
                     preDeathMessage = player.getName() + " took their own life!";
