@@ -3,6 +3,7 @@ package net.oldschoolminecraft.bcord.event;
 import com.legacyminecraft.poseidon.event.PlayerDeathEvent;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerChatEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -36,8 +37,8 @@ public class PoseidonPlayerHandler extends BridgecordHandler implements Listener
     }
 
     @EventHandler
-    public void onEntityDeath(EntityDeathEvent event)
+    public void onEntityDamage(EntityDamageEvent event)
     {
-        super.onEntityDeath(event);
+        super.onEntityDamage(event);
     }
 }

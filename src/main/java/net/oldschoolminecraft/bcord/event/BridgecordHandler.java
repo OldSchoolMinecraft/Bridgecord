@@ -20,6 +20,7 @@ import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.craftbukkit.entity.CraftPlayer;
 import org.bukkit.entity.*;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.*;
@@ -193,7 +194,7 @@ public abstract class BridgecordHandler extends PlayerListener
         }, 0L);
     }
 
-    public void onEntityDeath(EntityDeathEvent event)
+    public void onEntityDamage(EntityDamageEvent event)
     {
         if (DISABLED) return;
         if (!config.getBoolean("deathMessagesOnBridge", true)) return;
@@ -201,46 +202,58 @@ public abstract class BridgecordHandler extends PlayerListener
 
         Player player = (Player) event.getEntity();
 
-        EntityDamageEvent lastDamage = player.getLastDamageCause();
+        int damage = event.getDamage();
+        int oldHealth = player.getHealth();
+        int newHealth = oldHealth - damage;
+
+        if (newHealth > 0) return; // didn't die
+
         String preDeathMessage = player.getName() + " met an unfortunate end!";
 
-        if (lastDamage != null)
+        switch (event.getCause())
         {
-            switch (lastDamage.getCause())
-            {
-                case FALL:
-                    preDeathMessage = player.getName() + " fell to their demise!";
+            case FALL:
+                preDeathMessage = player.getName() + " fell to their demise!";
+                break;
+            case LAVA:
+                preDeathMessage = player.getName() + " tried to swim in lava!";
+                break;
+            case DROWNING:
+                preDeathMessage = player.getName() + " forgot how to swim!";
+                break;
+            case CONTACT:
+                preDeathMessage = player.getName() + " hugged a cactus too long";
+                break;
+            case ENTITY_ATTACK:
+                Entity entityAttacker = null;
+                if (player.getLastDamageCause() instanceof EntityDamageByEntityEvent)
+                    entityAttacker = ((EntityDamageByEntityEvent)player.getLastDamageCause()).getDamager();
+                if (entityAttacker == null)
+                {
+                    preDeathMessage = player.getName() + " was killed by an unknown entity";
                     break;
-                case LAVA:
-                    preDeathMessage = player.getName() + " tried to swim in lava!";
-                    break;
-                case DROWNING:
-                    preDeathMessage = player.getName() + " forgot how to swim!";
-                    break;
-                case CONTACT:
-                    preDeathMessage = player.getName() + " died from contact";
-                    break;
-                case ENTITY_ATTACK:
-                    Entity attacker = lastDamage.getEntity();
-                    if (attacker instanceof Monster)
-                        preDeathMessage = player.getName() + " was killed by a " + getEntityTypeName(attacker);
-                    if (attacker instanceof CraftPlayer)
-                        preDeathMessage = player.getName() + " was murdered by " + ((CraftPlayer)attacker).getName();
-                    break;
-                case SUICIDE:
-                    preDeathMessage = player.getName() + " took their own life!";
-                    break;
-                case SUFFOCATION:
-                    preDeathMessage = player.getName() + " suffocated!";
-                    break;
-                case LIGHTNING:
-                    preDeathMessage = player.getName() + " was killed by lightning!";
-                    break;
-                case PROJECTILE:
-                    preDeathMessage = player.getName() + " was shot by " + getEntityTypeName(player.getLastDamageCause().getEntity());
-                default:
-                    break;
-            }
+                }
+                if (entityAttacker instanceof Monster)
+                    preDeathMessage = player.getName() + " was killed by a " + getEntityTypeName(entityAttacker);
+                if (entityAttacker instanceof Player)
+                    preDeathMessage = player.getName() + " was murdered by " + ((Player)entityAttacker).getName();
+                break;
+            case SUICIDE:
+                preDeathMessage = player.getName() + " took their own life!";
+                break;
+            case SUFFOCATION:
+                preDeathMessage = player.getName() + " suffocated!";
+                break;
+            case LIGHTNING:
+                preDeathMessage = player.getName() + " was struck by lightning!";
+                break;
+            case PROJECTILE:
+                Entity projectileAttacker = null;
+                if (player.getLastDamageCause() instanceof EntityDamageByEntityEvent)
+                    projectileAttacker = ((EntityDamageByEntityEvent)player.getLastDamageCause()).getDamager();
+                preDeathMessage = player.getName() + " was shot by " + getEntityTypeName(projectileAttacker);
+            default:
+                break;
         }
 
         deliverMessage("__*" + preDeathMessage + "*__");
@@ -272,8 +285,14 @@ public abstract class BridgecordHandler extends PlayerListener
         if (entity instanceof Arrow)
         {
             Arrow arrow = (Arrow) entity;
-            if (arrow.getShooter() != null && arrow.getShooter() instanceof CraftPlayer)
-                return "an arrow from " + ((CraftPlayer)arrow.getShooter()).getName();
+            Entity shooter = arrow.getShooter();
+            if (shooter != null)
+            {
+                if (shooter instanceof Player)
+                    return "an arrow from " + ((CraftPlayer) arrow.getShooter()).getName();
+                if (shooter instanceof Monster) return "a " + getEntityTypeName(shooter);
+                return "a stray arrow";
+            }
             return "a stray arrow";
         }
         if (entity instanceof Fireball)
