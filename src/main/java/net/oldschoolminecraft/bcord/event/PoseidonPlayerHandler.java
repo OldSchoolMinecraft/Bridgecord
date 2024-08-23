@@ -39,6 +39,18 @@ public class PoseidonPlayerHandler extends BridgecordHandler implements Listener
     @EventHandler
     public void onEntityDamage(EntityDamageEvent event)
     {
-        super.onEntityDamage(event);
+//        super.onEntityDamage(event);
+    }
+
+    @EventHandler
+    public void onPlayerDeath(PlayerDeathEvent event)
+    {
+//        super.onPlayerDeath(event);
+    }
+
+    @EventHandler
+    public void onEntityDeath(EntityDeathEvent event)
+    {
+        super.onEntityDeath(event);
     }
 }

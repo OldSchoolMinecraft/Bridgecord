@@ -194,29 +194,18 @@ public abstract class BridgecordHandler extends PlayerListener
         }, 0L);
     }
 
-    private HashMap<String, Integer> lastHealthMap = new HashMap<>();
+    private final HashMap<String, Integer> lastHealthMap = new HashMap<>();
 
-    public void onEntityDamage(EntityDamageEvent event)
+    public void onEntityDeath(EntityDeathEvent event)
     {
         if (DISABLED) return;
         if (!config.getBoolean("deathMessagesOnBridge", true)) return;
         if (!(event.getEntity() instanceof Player)) return;
 
         Player player = (Player) event.getEntity();
-
-        int damage = event.getDamage();
-        int oldHealth = player.getHealth();
-        int newHealth = oldHealth - damage;
-
-        lastHealthMap.put(player.getName(), newHealth);
-
-        if (newHealth > 0) return; // didn't die
-        if (lastHealthMap.containsKey(player.getName()) && lastHealthMap.get(player.getName()) <= 0)
-            return; // they're already dead
-
         String preDeathMessage = player.getName() + " met an unfortunate end!";
 
-        switch (event.getCause())
+        switch (event.getEntity().getLastDamageCause().getCause())
         {
             case FALL:
                 preDeathMessage = player.getName() + " fell to their demise!";
@@ -230,19 +219,27 @@ public abstract class BridgecordHandler extends PlayerListener
             case CONTACT:
                 preDeathMessage = player.getName() + " hugged a cactus too long";
                 break;
+            case TNT_EXPLOSION:
+            case BLOCK_EXPLOSION:
+                preDeathMessage = player.getName() + " died in an explosion!";
+                break;
+            case ENTITY_EXPLOSION:
+                preDeathMessage = player.getName() + " was exploded by " + getEntityTypeName(((EntityDamageByEntityEvent) event.getEntity().getLastDamageCause()).getDamager()) + "!";
+                break;
             case ENTITY_ATTACK:
-                Entity entityAttacker = null;
-                if (player.getLastDamageCause() instanceof EntityDamageByEntityEvent)
-                    entityAttacker = ((EntityDamageByEntityEvent)player.getLastDamageCause()).getDamager();
-                if (entityAttacker == null)
+            case PROJECTILE:
+                EntityDamageByEntityEvent damageEvent = (EntityDamageByEntityEvent) event.getEntity().getLastDamageCause();
+                Entity attacker = damageEvent.getDamager();
+                if (attacker instanceof Player)
                 {
-                    preDeathMessage = player.getName() + " was killed by an unknown entity";
-                    break;
+                    preDeathMessage = player.getName() + " was murdered by " + ((Player) attacker).getName() + "!";
+                } else if (attacker instanceof Monster) {
+                    if (attacker instanceof Creeper)
+                        preDeathMessage = player.getName() + " got friendly with a Creeper!";
+                    else preDeathMessage = player.getName() + " was slain by " + getEntityTypeName(attacker) + "!";
+                } else if (attacker instanceof Projectile) {
+                    preDeathMessage = player.getName() + " was shot by " + getEntityTypeName(attacker) + "!";
                 }
-                if (entityAttacker instanceof Monster)
-                    preDeathMessage = player.getName() + " was killed by a " + getEntityTypeName(entityAttacker);
-                if (entityAttacker instanceof Player)
-                    preDeathMessage = player.getName() + " was murdered by " + ((Player)entityAttacker).getName();
                 break;
             case SUICIDE:
                 preDeathMessage = player.getName() + " took their own life!";
@@ -253,11 +250,6 @@ public abstract class BridgecordHandler extends PlayerListener
             case LIGHTNING:
                 preDeathMessage = player.getName() + " was struck by lightning!";
                 break;
-            case PROJECTILE:
-                Entity projectileAttacker = null;
-                if (player.getLastDamageCause() instanceof EntityDamageByEntityEvent)
-                    projectileAttacker = ((EntityDamageByEntityEvent)player.getLastDamageCause()).getDamager();
-                preDeathMessage = player.getName() + " was shot by " + getEntityTypeName(projectileAttacker);
             default:
                 break;
         }
@@ -271,15 +263,15 @@ public abstract class BridgecordHandler extends PlayerListener
         {
             if (entity instanceof Zombie)
             {
-                return "Zombie";
+                return "a Zombie";
             } else if (entity instanceof Skeleton) {
-                return "Skeleton";
+                return "a Skeleton";
             } else if (entity instanceof Creeper) {
-                return "Creeper";
+                return "a Creeper";
             } else if (entity instanceof Spider) {
-                return "Spider";
+                return "a Spider";
             }
-            return "monster";
+            return "a monster";
         }
         if (entity instanceof Snowball)
         {
@@ -296,14 +288,14 @@ public abstract class BridgecordHandler extends PlayerListener
             {
                 if (shooter instanceof Player)
                     return "an arrow from " + ((CraftPlayer) arrow.getShooter()).getName();
-                if (shooter instanceof Monster) return "a " + getEntityTypeName(shooter);
+                if (shooter instanceof Monster) return getEntityTypeName(shooter);
                 return "a stray arrow";
             }
             return "a stray arrow";
         }
         if (entity instanceof Fireball)
         {
-            Fireball fireball = (Fireball)entity;
+            Fireball fireball = (Fireball) entity;
             if (fireball.getShooter() instanceof Ghast)
                 return "a Ghast's fireball";
             return "a stray fireball";

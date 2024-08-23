@@ -1,5 +1,6 @@
 package net.oldschoolminecraft.bcord.event;
 
+import com.legacyminecraft.poseidon.event.PlayerDeathEvent;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.player.PlayerChatEvent;
@@ -25,6 +26,16 @@ public class BukkitPlayerHandler extends BridgecordHandler
 
     public void onEntityDamage(EntityDamageEvent event)
     {
-        super.onEntityDamage(event);
+//        super.onEntityDamage(event);
+    }
+
+    public void onPlayerDeath(PlayerDeathEvent event)
+    {
+//        super.onPlayerDeath(event);
+    }
+
+    public void onEntityDeath(EntityDeathEvent event)
+    {
+        super.onEntityDeath(event);
     }
 }
