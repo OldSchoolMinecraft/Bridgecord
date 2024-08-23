@@ -250,7 +250,16 @@ public abstract class BridgecordHandler extends PlayerListener
             case LIGHTNING:
                 preDeathMessage = player.getName() + " was struck by lightning!";
                 break;
+            case FIRE:
+            case FIRE_TICK:
+                preDeathMessage = player.getName() + " died in a fire!";
+                break;
+            case VOID:
+                preDeathMessage = player.getName() + " was consumed by the void!";
+                break;
+            case CUSTOM:
             default:
+                preDeathMessage = player.getName() + " managed to die inexplicably.";
                 break;
         }
 
