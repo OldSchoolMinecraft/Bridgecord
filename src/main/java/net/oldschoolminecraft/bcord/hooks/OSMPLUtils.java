@@ -23,6 +23,8 @@ public class OSMPLUtils
     {
         public String name;
         public String ip;
+        public long playTime;
+        public long firstJoin;
         public int kills;
         public int deaths;
         public Punishment currentBan;
