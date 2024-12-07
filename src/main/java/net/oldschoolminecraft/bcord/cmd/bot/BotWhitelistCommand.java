@@ -1,12 +1,14 @@
 package net.oldschoolminecraft.bcord.cmd.bot;
 
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.internal.requests.Route;
 import net.oldschoolminecraft.bcord.auth.AuthPluginHandler;
 import net.oldschoolminecraft.bcord.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import java.io.File;
+import java.util.ArrayList;
 
 public class BotWhitelistCommand extends BotCommand
 {
@@ -20,6 +22,24 @@ public class BotWhitelistCommand extends BotCommand
     {
         String[] args = event.getMessage().getContentRaw().split(" ");
 
+        ArrayList<String> allowedRoleIDs = (ArrayList<String>) config.getConfigOption("command.whitelist.allowedRoles");
+        if (allowedRoleIDs == null)
+        {
+            event.getMessage().reply("Failed to check permissions. Contact the system administrator.").queue();
+            return;
+        }
+
+        boolean isAllowed = false;
+        for (String roleID : allowedRoleIDs)
+            if (hasRoleByID(event.getMember(), roleID))
+                isAllowed = true;
+
+        if (!isAllowed)
+        {
+            event.getMessage().reply("You do not have any of the required roles to use this command!").queue();
+            return;
+        }
+
         if (!Bukkit.getServer().hasWhitelist())
         {
             event.getMessage().reply("The whitelist is not currently active.").queue();
@@ -28,7 +48,7 @@ public class BotWhitelistCommand extends BotCommand
 
         if (args.length-1 < 1)
         {
-            event.getMessage().reply("You must specify a username!").queue();
+            event.getMessage().reply("You must specify a username! Usage: `!whitelist <username>`").queue();
             return;
         }
 
@@ -36,13 +56,19 @@ public class BotWhitelistCommand extends BotCommand
 
         AuthPluginHandler authHandler = Util.selectAuthPlugin();
         OfflinePlayer player = Bukkit.getOfflinePlayer(username);
-        if (player == null || !authHandler.isRegistered(username))
+        if ((player == null || !authHandler.isRegistered(username)) && !(hasRoleByID(event.getMember(), String.valueOf(config.getConfigOption("adminRoleID")))))
         {
-            event.getMessage().reply("We are not currently accepting new players. Sorry!").queue();
+            event.getMessage().reply("Only administrators can whitelist this user, as they have never played before.").queue();
+            return;
+        }
+
+        if (player == null)
+        {
+            event.getMessage().reply("An error occurred while trying to whitelist this player.").queue();
             return;
         }
 
         player.setWhitelisted(true);
-        event.getMessage().reply("You have been added to the whitelist!").queue();
+        event.getMessage().addReaction("✅").queue();
     }
 }

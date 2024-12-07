@@ -33,6 +33,7 @@ public class PluginConfig extends Configuration
         //TODO: separate linked & unlinked formats
 
         generateConfigOption("staffRoleID", "INSERT_STAFF_ROLE_ID_HERE");
+        generateConfigOption("adminRoleID", "INSERT_ADMIN_ROLE_ID_HERE");
         generateConfigOption("deathMessagesOnBridge", true);
         generateConfigOption("hidePlayersWithPermission", "bcord.hidden");
         generateConfigOption("useInvisiman", false);
@@ -50,6 +51,8 @@ public class PluginConfig extends Configuration
         generateConfigOption("commands.link.label", "link");
         generateConfigOption("commands.auth.label", "auth");
         generateConfigOption("commands.reset.label", "reset");
+
+        generateConfigOption("commands.whitelist.allowedRoles", Arrays.asList("ROLE_ID_1", "ROLE_ID_2", "etc"));
 
         generateConfigOption("serverEmptyMessage", "Nobody is online :(");
 

@@ -39,7 +39,7 @@ public class BotListener extends ListenerAdapter
             botCommands.add(new BotAuthCommand());
             botCommands.add(new BotStaffLockCommand());
             botCommands.add(new BotVouchCommand());
-//            botCommands.add(new BotWhitelistCommand());
+            botCommands.add(new BotWhitelistCommand());
             // botCommands.add(new BotMFACommand());
         }
     }
