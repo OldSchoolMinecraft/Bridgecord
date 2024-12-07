@@ -1,6 +1,8 @@
 package net.oldschoolminecraft.bcord.cmd.bot;
 
+import net.dv8tion.jda.api.entities.Member;
 import net.dv8tion.jda.api.entities.Message;
+import net.dv8tion.jda.api.entities.Role;
 import net.dv8tion.jda.api.entities.User;
 import net.dv8tion.jda.api.events.message.MessageReceivedEvent;
 import net.oldschoolminecraft.bcord.Bridgecord;
@@ -57,6 +59,12 @@ public abstract class BotCommand
     {
         if (reply) dcMsg.reply(usageMessage).queue();
         else dcMsg.getChannel().sendMessage(usageMessage).queue();
+    }
+
+    public boolean hasRoleByID(Member member, String roleId)
+    {
+        Role role = member.getGuild().getRoleById(roleId);
+        return role != null && member.getRoles().contains(role);
     }
 
     public BotCommandConfig getConfig()

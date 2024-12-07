@@ -18,29 +18,26 @@ public class BotStaffLockCommand extends BotCommand
     @Override
     public void execute(MessageReceivedEvent event)
     {
-        for (Role role : Objects.requireNonNull(event.getMember()).getRoles())
+        if (!hasRoleByID(Objects.requireNonNull(event.getMember()), String.valueOf(config.getConfigOption("staffRoleID"))))
         {
-            if (role.getId().equals(String.valueOf(Bridgecord.getInstance().getConfig().getConfigOption("staffRoleID"))))
-            {
-                LinkData linkData = Bridgecord.getInstance().getLinkHandler().loadLinkDataByID(event.getAuthor().getId());
-                if (linkData == null)
-                {
-                    event.getMessage().reply("Your account is not linked :(").queue();
-                    return;
-                }
-
-                if (!StaffLockHandler.getInstance().hasLock(linkData.username))
-                {
-                    event.getMessage().reply("Your account is not locked :)").queue();
-                    return;
-                }
-
-                StaffLockHandler.getInstance().unlock(linkData.username);
-                event.getMessage().reply("Your account has been temporarily unlocked!").queue();
-                return;
-            }
+            event.getMessage().reply("You do not have the required role to use this command!").queue();
+            return;
         }
 
-        event.getMessage().reply("You do not have the required role to run this command.").queue();
+        LinkData linkData = Bridgecord.getInstance().getLinkHandler().loadLinkDataByID(event.getAuthor().getId());
+        if (linkData == null)
+        {
+            event.getMessage().reply("Your account is not linked :(").queue();
+            return;
+        }
+
+        if (!StaffLockHandler.getInstance().hasLock(linkData.username))
+        {
+            event.getMessage().reply("Your account is not locked :)").queue();
+            return;
+        }
+
+        StaffLockHandler.getInstance().unlock(linkData.username);
+        event.getMessage().reply("Your account has been temporarily unlocked!").queue();
     }
 }
