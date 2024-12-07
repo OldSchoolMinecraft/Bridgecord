@@ -7,6 +7,9 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class StaffLockHandler
 {
@@ -17,25 +20,27 @@ public class StaffLockHandler
         return instance;
     }
 
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
     private final ArrayList<String> unlocked = new ArrayList<>();
-    private final Timer timer = new Timer();
 
     public void unlock(String username)
     {
         unlocked.add(username);
-        timer.schedule(new TimerTask() {
-            @Override
-            public void run()
+        scheduleRelock(username);
+    }
+
+    private void scheduleRelock(String username)
+    {
+        scheduler.schedule(() ->
+        {
+            // if the player is online, reset the timer without re-locking
+            if (Bukkit.getOfflinePlayer(username).isOnline())
             {
-                // if the player is online, reset the timer without re-locking
-                if (Bukkit.getOfflinePlayer(username).isOnline())
-                {
-                    timer.schedule(this, 1000L * 60L * 5L);
-                    return;
-                }
-                unlocked.remove(username);
+                scheduleRelock(username);
+                return;
             }
-        }, 1000L * 60L * 5L); // 5 minute authorization TODO: add configuration option
+            unlocked.remove(username);
+        }, 5, TimeUnit.MINUTES);
     }
 
     public boolean isUnlocked(String username)
