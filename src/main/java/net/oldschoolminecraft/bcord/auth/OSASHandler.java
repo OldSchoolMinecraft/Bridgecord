@@ -24,6 +24,9 @@ public class OSASHandler implements AuthPluginHandler
         if (!osas.fallbackManager.isRegistered(username.toLowerCase())) throw new AuthHandlerException("User account is not registered"); // prevent unregistered users from bypassing auth
         osas.fallbackManager.authenticatePlayer(username.toLowerCase());
         osas.fallbackManager.unfreezePlayer(username.toLowerCase());
+        // this ensures that players using !auth have their inventory loaded correctly.
+        // if this isn't done, inventory data could be lost.
+        Util.loadInventory(Bukkit.getPlayer(username));
     }
 
     public void deleteAccount(String username) throws AuthHandlerException
@@ -47,6 +50,10 @@ public class OSASHandler implements AuthPluginHandler
         {
             osas.fallbackManager.deauthenticatePlayer(username.toLowerCase());
             osas.fallbackManager.freezePlayer(username.toLowerCase());
+            // when they reset their password, it logs them out.
+            // so we need to make sure their inventory is saved and cleared
+            // in order to match the state of being logged out normally
+            Util.saveInventory(Bukkit.getPlayer(username), false);
         }
     }
 
