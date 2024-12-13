@@ -3,6 +3,7 @@ package net.oldschoolminecraft.bcord;
 import com.johnymuffin.discordcore.DiscordBot;
 import com.johnymuffin.discordcore.DiscordCore;
 import com.oldschoolminecraft.vanish.Invisiman;
+import io.github.aleksandarharalanov.chatguard.ChatGuard;
 import net.dv8tion.jda.api.EmbedBuilder;
 import net.dv8tion.jda.api.entities.MessageEmbed;
 import net.oldschoolminecraft.bcord.cmd.BcordCommand;
@@ -14,6 +15,7 @@ import net.oldschoolminecraft.bcord.data.RemoteDataSource;
 import net.oldschoolminecraft.bcord.event.BridgecordHandler;
 import net.oldschoolminecraft.bcord.event.BukkitPlayerHandler;
 import net.oldschoolminecraft.bcord.event.PoseidonPlayerHandler;
+import net.oldschoolminecraft.bcord.hooks.CGUtils;
 import net.oldschoolminecraft.bcord.hooks.EssUtils;
 import net.oldschoolminecraft.bcord.hooks.OSMPLUtils;
 import net.oldschoolminecraft.bcord.hooks.PEXUtils;
@@ -42,6 +44,7 @@ public class Bridgecord extends JavaPlugin
     private OSMPLUtils osmplUtils;
     private BridgecordHandler currentEventHandler;
     private BotListener botListener;
+    private CGUtils cgUtils;
 
     public void onEnable()
     {
@@ -75,6 +78,11 @@ public class Bridgecord extends JavaPlugin
         try
         {
             osmplUtils = new OSMPLUtils();
+        } catch (Exception ignored) {}
+
+        try
+        {
+            cgUtils = new CGUtils();
         } catch (Exception ignored) {}
 
         AbstractDataSource dataSource = null;
@@ -177,6 +185,11 @@ public class Bridgecord extends JavaPlugin
     public OSMPLUtils getOSMPLUtils()
     {
         return osmplUtils;
+    }
+
+    public CGUtils getCgUtils()
+    {
+        return cgUtils;
     }
 
     public BridgecordHandler getCurrentEventHandler()

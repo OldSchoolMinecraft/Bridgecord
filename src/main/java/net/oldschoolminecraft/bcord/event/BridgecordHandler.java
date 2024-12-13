@@ -47,6 +47,13 @@ public abstract class BridgecordHandler extends PlayerListener
     {
         if (DISABLED || event.isCancelled()) return;
 
+        // attempted fix for ChatGuard issue
+        if (plugin.getCgUtils().isEventCancelled(event))
+        {
+            event.setCancelled(true);
+            return;
+        }
+
         boolean preventUnauthorizedChats = (boolean) config.getConfigOption("preventUnauthorizedChats");
         if (preventUnauthorizedChats)
         {
