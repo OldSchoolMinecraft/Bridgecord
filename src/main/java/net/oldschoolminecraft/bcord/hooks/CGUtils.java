@@ -18,6 +18,7 @@ public class CGUtils
 
     public boolean isEventCancelled(PlayerChatEvent event)
     {
+        if (cg == null) return false;
         chatListener.onPlayerChat(event);
         return event.isCancelled();
     }
