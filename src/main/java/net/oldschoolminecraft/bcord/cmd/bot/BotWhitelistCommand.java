@@ -9,6 +9,7 @@ import org.bukkit.OfflinePlayer;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 
 public class BotWhitelistCommand extends BotCommand
 {
@@ -22,7 +23,7 @@ public class BotWhitelistCommand extends BotCommand
     {
         String[] args = event.getMessage().getContentRaw().split(" ");
 
-        ArrayList<String> allowedRoleIDs = (ArrayList<String>) config.getConfigOption("command.whitelist.allowedRoles");
+        List<String> allowedRoleIDs = config.getStringList("command.whitelist.allowedRoles", new ArrayList<>());
         if (allowedRoleIDs == null)
         {
             event.getMessage().reply("Failed to check permissions. Contact the system administrator.").queue();

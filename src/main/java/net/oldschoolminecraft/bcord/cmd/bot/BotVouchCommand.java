@@ -10,6 +10,8 @@ import net.oldschoolminecraft.bcord.util.Util;
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
+import java.nio.file.AccessDeniedException;
+import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 public class BotVouchCommand extends BotCommand
@@ -45,12 +47,12 @@ public class BotVouchCommand extends BotCommand
             return;
         }
 
-        long playTime = new OSMPLUtils().getUserData(username).playTime;
+        long playTime = new OSMPLUtils().getUserData(linkData.username).playTime;
         long hours = TimeUnit.MILLISECONDS.toHours(playTime);
 
         if (hours < 1)
         {
-            event.getMessage().reply("You must have an hour of playtime to vouch for players!").queue();
+            event.getMessage().reply("You must have at least 1 hour of playtime to vouch for players!").queue();
             return;
         }
 
@@ -60,10 +62,22 @@ public class BotVouchCommand extends BotCommand
             return;
         }
 
-        System.out.println("[Bridgecord] " + event.getAuthor().getName() + " (" + event.getAuthor().getId() + ") has vouched for player: " + username);
+        try
+        {
+            Util.saveVouch(linkData.username, username);
 
-        OfflinePlayer player = Bukkit.getOfflinePlayer(username);
-        player.setWhitelisted(true);
-        event.getMessage().reply("Your vouch has been accepted and `" + player.getName() + "` has been whitelisted.").queue();
+            System.out.println("[Bridgecord] " + event.getAuthor().getName() + " (" + event.getAuthor().getId() + ") has vouched for player: " + username);
+
+            OfflinePlayer player = Bukkit.getOfflinePlayer(username);
+            player.setWhitelisted(true);
+            event.getMessage().reply("Your vouch has been accepted and `" + player.getName() + "` has been whitelisted.").queue();
+        } catch (AccessDeniedException e) {
+            event.getMessage().reply("You have reached your vouch limit. You cannot vouch for any more players at this time.").queue();
+        } catch (Exception ex) {
+            String errorID = UUID.randomUUID().toString().split("-")[0];
+            System.err.println("BRIDGECORD ERROR ID: " + errorID);
+            ex.printStackTrace(System.err);
+            event.getMessage().reply("An unknown error has occurred. The error ID is `" + errorID + "`. Please pass this along to an administrator.").queue();
+        }
     }
 }

@@ -1,13 +1,21 @@
 package net.oldschoolminecraft.bcord.util;
 
+import com.google.gson.Gson;
+import net.oldschoolminecraft.bcord.Bridgecord;
 import net.oldschoolminecraft.bcord.auth.*;
 import org.bukkit.ChatColor;
+import org.bukkit.entity.Player;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.AccessDeniedException;
 import java.util.*;
 
 public class Util
 {
     private static Random rng = new Random();
+    private static Gson gson = new Gson();
 
     private static final List<AuthPluginHandler> SUPPORTED_AUTH_HANDLERS = new ArrayList<>();
 
@@ -75,5 +83,21 @@ public class Util
         for (String key : data.keySet())
             pre = pre.replace(key, data.get(key));
         return pre;
+    }
+
+    public static void saveVouch(String voucher, String vouched) throws IOException
+    {
+        File vouchDir = new File(Bridgecord.getInstance().getDataFolder(), "vouchers/" + voucher + "/");
+        if (!vouchDir.getParentFile().exists()) vouchDir.getParentFile().mkdirs();
+        if (!vouchDir.exists()) vouchDir.mkdirs();
+        int files = Objects.requireNonNull(vouchDir.listFiles()).length;
+        if (files >= 5) throw new AccessDeniedException("The voucher has already reached their vouch limit: " + voucher);
+        File vouchFile = new File(vouchDir, voucher + "." + (files + 1) + "." + ".json");
+        if (!vouchFile.createNewFile()) throw new IOException("Failed to create vouch");
+        try (FileWriter writer = new FileWriter(vouchFile))
+        {
+            VouchRecord vouchRecord = new VouchRecord(vouched);
+            gson.toJson(vouchRecord, writer);
+        }
     }
 }

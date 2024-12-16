@@ -27,6 +27,9 @@ import org.bukkit.event.Event;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Objects;
 
 public class Bridgecord extends JavaPlugin
 {
@@ -120,6 +123,53 @@ public class Bridgecord extends JavaPlugin
         System.out.println("Bridgecord enabled");
     }
 
+    private void checkVouchResets()
+    {
+        int lastResetMonth = -1;
+        for (File file : Objects.requireNonNull(getDataFolder().listFiles()))
+            if (file.getName().startsWith("lastVouchReset_"))
+                lastResetMonth = Integer.parseInt(file.getName().split("_")[1]);
+
+        Calendar cal = Calendar.getInstance();
+        int month = cal.get(Calendar.MONTH);
+        int dayOfMonth = cal.get(Calendar.DAY_OF_MONTH);
+
+        if (lastResetMonth != -1 && lastResetMonth == month)
+            return; // reset was already performed for this month
+
+        if (dayOfMonth == 1)
+        {
+            for (File folder : Objects.requireNonNull(new File(getDataFolder(), "vouches/").listFiles()))
+                recursiveDelete(folder);
+
+            File lastResetFile = new File("lastVouchReset_" + lastResetMonth);
+            File newResetFile = new File("lastVouchReset_" + month);
+            if (!lastResetFile.delete()) lastResetFile.deleteOnExit();
+            try
+            {
+                newResetFile.createNewFile();
+            } catch (Exception ex) {
+                ex.printStackTrace(System.err);
+            }
+        }
+    }
+
+    private void recursiveDelete(File folder)
+    {
+        if (!folder.isDirectory()) return;
+        for (File f : Objects.requireNonNull(folder.listFiles()))
+        {
+            if (f.isDirectory())
+            {
+                recursiveDelete(f);
+                continue;
+            }
+
+            if (!f.delete()) f.deleteOnExit();
+        }
+        if (!folder.delete()) folder.deleteOnExit();
+    }
+
     public void registerEvents()
     {
         if (currentEventHandler != null) currentEventHandler.disable();
@@ -132,6 +182,7 @@ public class Bridgecord extends JavaPlugin
             getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, currentEventHandler, eventPriority, this);
             getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, currentEventHandler, eventPriority, this);
             getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, currentEventHandler, eventPriority, this);
+            getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, currentEventHandler, eventPriority, this);
         }
     }
 
