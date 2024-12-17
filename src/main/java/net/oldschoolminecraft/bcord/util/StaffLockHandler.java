@@ -4,9 +4,7 @@ import net.oldschoolminecraft.bcord.Bridgecord;
 import org.bukkit.Bukkit;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -20,35 +18,37 @@ public class StaffLockHandler
         return instance;
     }
 
-    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-    private final ArrayList<String> unlocked = new ArrayList<>();
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(10);
+    private final ConcurrentHashMap<String, Long> unlocked = new ConcurrentHashMap<>();
 
     public void unlock(String username)
     {
-        unlocked.add(username);
-        scheduleRelock(username);
+        String lowerUsername = username.toLowerCase();
+        unlocked.put(lowerUsername, System.currentTimeMillis());
+        scheduleRelock(lowerUsername);
     }
 
     private void scheduleRelock(String username)
     {
         scheduler.schedule(() ->
         {
-            // if the player is online, reset the timer without re-locking
-            if (Bukkit.getOfflinePlayer(username).isOnline())
+            // If the player is still online, check again in 1 minute
+            if (Bukkit.getPlayer(username) != null)
             {
                 scheduleRelock(username);
                 return;
             }
-            unlocked.remove(username);
-        }, 5, TimeUnit.MINUTES);
+
+            // Remove unlock status only if 5 minutes have passed
+            Long unlockTime = unlocked.get(username);
+            if (unlockTime != null && System.currentTimeMillis() - unlockTime >= TimeUnit.MINUTES.toMillis(5))
+                unlocked.remove(username);
+        }, 1, TimeUnit.MINUTES); // Check every minute for relocking
     }
 
     public boolean isUnlocked(String username)
     {
-        for (String name : unlocked)
-            if (name.equalsIgnoreCase(username))
-                return true;
-        return false;
+        return unlocked.containsKey(username.toLowerCase());
     }
 
     public boolean hasLock(String username)
