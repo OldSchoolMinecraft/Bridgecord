@@ -182,7 +182,8 @@ public class Bridgecord extends JavaPlugin
             getServer().getPluginManager().registerEvent(Event.Type.PLAYER_CHAT, currentEventHandler, eventPriority, this);
             getServer().getPluginManager().registerEvent(Event.Type.PLAYER_JOIN, currentEventHandler, eventPriority, this);
             getServer().getPluginManager().registerEvent(Event.Type.PLAYER_QUIT, currentEventHandler, eventPriority, this);
-            getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, currentEventHandler, eventPriority, this);
+            //TODO: THIS NEEDS TO BE FIXED - it causes ClassCastException spam in the log
+//            getServer().getPluginManager().registerEvent(Event.Type.ENTITY_DEATH, currentEventHandler, eventPriority, this);
         }
     }
 
