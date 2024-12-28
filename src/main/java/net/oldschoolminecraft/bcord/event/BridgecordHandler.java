@@ -123,12 +123,16 @@ public abstract class BridgecordHandler extends PlayerListener
             {
                 JsonObject data = gson.fromJson(reader, JsonObject.class);
                 long playTime = data.get("playTime").getAsLong();
-                if (TimeUnit.MILLISECONDS.toHours(playTime) > 1L)
+                if (TimeUnit.MILLISECONDS.toHours(playTime) >= 1L)
                 {
                     // add to whitelist and allow them through
                     Bukkit.getOfflinePlayer(event.getName()).setWhitelisted(true);
                     event.allow();
+                    return;
                 }
+
+                // if they don't meet the playtime requirement, kick them for the same reason as having no playtime
+                event.cancelPlayerLogin(ChatColor.translateAlternateColorCodes('&', noWhitelistMsg));
             } catch (IOException ignored) {}
         }
     }
