@@ -55,6 +55,8 @@ public class PluginConfig extends Configuration
         generateConfigOption("commands.whitelist.allowedRoles", Arrays.asList("ROLE_ID_1", "ROLE_ID_2", "etc"));
 
         generateConfigOption("serverEmptyMessage", "Nobody is online :(");
+        generateConfigOption("autoWhitelist", false);
+        generateConfigOption("noWhitelistMsg", "&cWhitelist mode is on. Info @ os-mc.net/discord");
 
         generateConfigOption("discordLinking.dataSource", "remote");
         generateConfigOption("discordLinking.enabled", true);

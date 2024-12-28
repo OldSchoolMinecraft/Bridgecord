@@ -2,6 +2,8 @@ package net.oldschoolminecraft.bcord.event;
 
 import com.earth2me.essentials.User;
 import com.earth2me.essentials.UserData;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.johnymuffin.discordcore.DiscordBot;
 import com.legacyminecraft.poseidon.event.PlayerDeathEvent;
 import com.oldschoolminecraft.jp.JoinsPlus;
@@ -27,10 +29,15 @@ import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitScheduler;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 public abstract class BridgecordHandler extends PlayerListener
 {
+    private static final Gson gson = new Gson();
     private static final Bridgecord plugin = Bridgecord.getInstance();
     private static final DiscordBot bot = Bridgecord.getInstance().getBot();
     private static final PluginConfig config = Bridgecord.getInstance().getConfig();
@@ -100,6 +107,29 @@ public abstract class BridgecordHandler extends PlayerListener
                 return;
             }
             event.allow();
+        }
+
+        boolean autoWhitelist = config.getBoolean("autoWhitelist", false);
+        String noWhitelistMsg = config.getString("noWhitelistMsg", "&cWhitelist mode is on. Info @ os-mc.net/discord");
+        if (autoWhitelist)
+        {
+            File datFile = new File("playerdata/" + event.getName().toLowerCase() + ".json");
+            if (!datFile.exists()) // never played before
+            {
+                event.cancelPlayerLogin(ChatColor.translateAlternateColorCodes('&', noWhitelistMsg));
+                return;
+            }
+            try (FileReader reader = new FileReader(datFile))
+            {
+                JsonObject data = gson.fromJson(reader, JsonObject.class);
+                long playTime = data.get("playTime").getAsLong();
+                if (TimeUnit.MILLISECONDS.toHours(playTime) > 1L)
+                {
+                    // add to whitelist and allow them through
+                    Bukkit.getOfflinePlayer(event.getName()).setWhitelisted(true);
+                    event.allow();
+                }
+            } catch (IOException ignored) {}
         }
     }
 
