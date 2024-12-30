@@ -81,8 +81,10 @@ public abstract class BridgecordHandler extends PlayerListener
 
         String formattedMessage = Util.processMessage(String.valueOf(config.getConfigOption("bridgeMessageFormat.shownInDiscord")), new HashMap<String, String>()
         {{
+            String displayName = event.getPlayer().getDisplayName();
+            displayName = displayName.replace("@", ""); // try prevent pings
             put("{name}", Util.stripAllColor(event.getPlayer().getName()));
-            put("{displayName}", Util.stripAllColor(event.getPlayer().getDisplayName()));
+            put("{displayName}", Util.stripAllColor(displayName));
             put("{msg}", Util.stripAllColor(event.getMessage()));
             if (config.getBoolean("usePEXPrefixes", false))
             {
