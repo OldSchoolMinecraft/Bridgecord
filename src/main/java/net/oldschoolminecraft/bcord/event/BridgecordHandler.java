@@ -111,7 +111,7 @@ public abstract class BridgecordHandler extends PlayerListener
 
         boolean autoWhitelist = config.getBoolean("autoWhitelist", false);
         String noWhitelistMsg = config.getString("noWhitelistMsg", "&cWhitelist mode is on. Info @ os-mc.net/discord");
-        if (autoWhitelist)
+        if (autoWhitelist && Bukkit.hasWhitelist())
         {
             File datFile = new File("playerdata/" + event.getName().toLowerCase() + ".json");
             if (!datFile.exists()) // never played before
@@ -159,6 +159,7 @@ public abstract class BridgecordHandler extends PlayerListener
                 {
                     msg = "*" + jpMessage.join + "*";
                     msg = msg.replace("%player%", "__" + event.getPlayer().getName() + "__");
+                    msg = msg.replace("@everyone", "");
                 }
             }
             if (invisimanInstalled && useInvisiman && invisiman.isVanished(event.getPlayer())) return;
@@ -210,6 +211,7 @@ public abstract class BridgecordHandler extends PlayerListener
                 {
                     msg = "*" + jpMessage.quit + "*";
                     msg = msg.replace("%player%", "__" + event.getPlayer().getName() + "__");
+                    msg = msg.replace("@everyone", "");
                 }
             }
             if (invisimanInstalled && useInvisiman && invisiman.isVanished(event.getPlayer())) return;
