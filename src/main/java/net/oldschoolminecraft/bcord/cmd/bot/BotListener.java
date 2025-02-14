@@ -14,6 +14,8 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class BotListener extends ListenerAdapter
 {
@@ -133,13 +135,34 @@ public class BotListener extends ListenerAdapter
                     put("{displayName}", event.getAuthor().getName());
                     put("{msg}", Util.stripAllColor(event.getMessage().getContentStripped()));
                 }});
+
+                MessageReference msgRef = event.getMessage().getMessageReference();
+                boolean addReply = config.getBoolean("replies.showInGame", true) && msgRef != null && msgRef.getMessage() != null;
+                String replyMsgRaw = addReply ? msgRef.getMessage().getContentRaw() : "";
+                String replyMsg = replyMsgRaw;
+
+                if (config.getBoolean("replies.process", false))
+                {
+                    Pattern pattern = Pattern.compile(config.getString("replies.processRegex", "^\\[[^\\]]+\\]\\s+([a-zA-Z0-9_]+):\\s*(.*)"));
+                    Matcher matcher = pattern.matcher(replyMsgRaw);
+                    replyMsg = Util.processMessage(translateAlternateColorCodes('&', String.valueOf(config.getConfigOption("bridgeMessageFormat.shownInGame"))), new HashMap<String, String>()
+                    {{
+                        put("{name}", event.getAuthor().getName());
+                        put("&a> {msg}", Util.stripAllColor(matcher.group(2)));
+                    }});
+                }
+
                 if (pre.length() <= 128)
                     msgChunks.add(pre);
                 else {
                     msgChunks.addAll(Util.splitString(pre, 128));
                 }
+
                 for (Player p : Bukkit.getOnlinePlayers())
+                {
+                    if (addReply) p.sendMessage(replyMsg);
                     msgChunks.forEach(p::sendMessage);
+                }
             });
         }
     }

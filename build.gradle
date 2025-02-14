@@ -35,7 +35,6 @@ dependencies {
     implementation(files("libs/evo-core.jar"))
     implementation(files("libs/PermissionsEx.jar"))
     implementation(files("libs/Essentials.jar"))
-    implementation(files("libs/ChatGuard-2.0.0.jar"))
 
     implementation 'com.mysql:mysql-connector-j:8.2.0'
     implementation 'org.apache.commons:commons-pool2:2.12.0'

@@ -58,6 +58,10 @@ public class PluginConfig extends Configuration
         generateConfigOption("autoWhitelist", false);
         generateConfigOption("noWhitelistMsg", "&cWhitelist mode is on. Info @ os-mc.net/discord");
 
+        generateConfigOption("replies.showInGame", true);
+        generateConfigOption("replies.process", false);
+        generateConfigOption("replies.processRegex", "^\\[[^\\]]+\\]\\s+([a-zA-Z0-9_]+):\\s*(.*)");
+
         generateConfigOption("discordLinking.dataSource", "remote");
         generateConfigOption("discordLinking.enabled", true);
         generateConfigOption("discordLinking.DISCLAIMER_NOTE", "The dataSource value must be kept at 'remote' until the local data source is properly implemented. Thank you!");
