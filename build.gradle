@@ -1,5 +1,5 @@
 plugins {
-    id 'com.github.johnrengelman.shadow' version '8.1.1'
+//    id 'com.github.johnrengelman.shadow' version '8.1.1'
     id 'java'
 }
 
@@ -10,7 +10,7 @@ repositories {
     }
 }
 
-shadowJar {
+/*shadowJar {
     exclude 'poseidon.jar'
     exclude 'botcore.jar'
     exclude 'Invisiman.jar'
@@ -22,7 +22,7 @@ shadowJar {
     exclude 'PermissionsEx.jar'
     exclude 'Essentials.jar'
     exclude 'ChatGuard-2.0.0.jar'
-}
+}*/
 
 dependencies {
     implementation(files("libs/poseidon.jar"))

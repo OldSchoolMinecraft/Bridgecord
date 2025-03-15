@@ -56,7 +56,7 @@ public class PluginConfig extends Configuration
 
         generateConfigOption("serverEmptyMessage", "Nobody is online :(");
         generateConfigOption("autoWhitelist", false);
-        generateConfigOption("noWhitelistMsg", "&cWhitelist mode is on. Info @ os-mc.net/discord");
+        generateConfigOption("noWhitelistMsg", "&cWhitelist mode is on! [&eos-mc.net/discord&c]");
 
         generateConfigOption("replies.showInGame", true);
         generateConfigOption("replies.process", false);

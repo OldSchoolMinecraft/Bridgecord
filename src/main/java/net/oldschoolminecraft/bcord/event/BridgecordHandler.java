@@ -112,15 +112,24 @@ public abstract class BridgecordHandler extends PlayerListener
         }
 
         boolean autoWhitelist = config.getBoolean("autoWhitelist", false);
-        String noWhitelistMsg = config.getString("noWhitelistMsg", "&cWhitelist mode is on. Info @ os-mc.net/discord");
+        String noWhitelistMsg = config.getString("noWhitelistMsg", "&cWhitelist mode is on! [&eos-mc.net/discord&c]");
         if (autoWhitelist && Bukkit.hasWhitelist())
         {
+            OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(event.getName());
+            if (offlinePlayer.isWhitelisted())
+            {
+                // no need to continue with our check if they've already been whitelisted
+                event.allow();
+                return;
+            }
+
             File datFile = new File("playerdata/" + event.getName().toLowerCase() + ".json");
             if (!datFile.exists()) // never played before
             {
                 event.cancelPlayerLogin(ChatColor.translateAlternateColorCodes('&', noWhitelistMsg));
                 return;
             }
+
             try (FileReader reader = new FileReader(datFile))
             {
                 JsonObject data = gson.fromJson(reader, JsonObject.class);
@@ -128,7 +137,7 @@ public abstract class BridgecordHandler extends PlayerListener
                 if (TimeUnit.MILLISECONDS.toHours(playTime) >= 1L)
                 {
                     // add to whitelist and allow them through
-                    Bukkit.getOfflinePlayer(event.getName()).setWhitelisted(true);
+                    offlinePlayer.setWhitelisted(true);
                     event.allow();
                     return;
                 }
