@@ -85,8 +85,10 @@ public class Util
         return pre;
     }
 
-    public static void saveVouch(String voucher, String vouched) throws IOException
+    public static void saveVouch(String voucher, String vouched, boolean staffVouch) throws IOException
     {
+        if (staffVouch) return; // don't save the vouch or throw exception, just return.
+
         File vouchDir = new File(Bridgecord.getInstance().getDataFolder(), "vouchers/" + voucher + "/");
         if (!vouchDir.getParentFile().exists()) vouchDir.getParentFile().mkdirs();
         if (!vouchDir.exists()) vouchDir.mkdirs();

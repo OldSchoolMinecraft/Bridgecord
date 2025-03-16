@@ -11,6 +11,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 
 import java.nio.file.AccessDeniedException;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -64,13 +65,18 @@ public class BotVouchCommand extends BotCommand
 
         try
         {
-            Util.saveVouch(linkData.username, username);
+            boolean isStaff = hasRoleByID(Objects.requireNonNull(event.getMember()), String.valueOf(config.getConfigOption("staffRoleID")));
+            Util.saveVouch(linkData.username, username, isStaff);
 
             System.out.println("[Bridgecord] " + event.getAuthor().getName() + " (" + event.getAuthor().getId() + ") has vouched for player: " + username);
 
             OfflinePlayer player = Bukkit.getOfflinePlayer(username);
             player.setWhitelisted(true);
-            event.getMessage().reply("Your vouch has been accepted and `" + player.getName() + "` has been whitelisted.").queue();
+
+            String msg = "Your vouch has been accepted and `" + player.getName() + "` has been whitelisted.";
+            if (isStaff)
+                msg = "**(STAFF OVERRIDE)** Whitelist for `" + player.getName() + "` has been forced.";
+            event.getMessage().reply(msg).queue();
         } catch (AccessDeniedException e) {
             event.getMessage().reply("You have reached your vouch limit. You cannot vouch for any more players at this time.").queue();
         } catch (Exception ex) {
