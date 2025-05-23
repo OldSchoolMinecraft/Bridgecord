@@ -22,6 +22,7 @@ public class OSASHandler implements AuthPluginHandler
     {
         if (!isInstalled()) throw new AuthHandlerException("OSAS is not installed");
         if (!osas.fallbackManager.isRegistered(username.toLowerCase())) throw new AuthHandlerException("User account is not registered"); // prevent unregistered users from bypassing auth
+        if (osas.fallbackManager.isAuthenticated(username.toLowerCase()) && !osas.fallbackManager.isFrozen(username.toLowerCase())) return; // do not authenticate if already authenticated & not frozen
         osas.fallbackManager.authenticatePlayer(username.toLowerCase());
         osas.fallbackManager.unfreezePlayer(username.toLowerCase());
         // this ensures that players using !auth have their inventory loaded correctly.
