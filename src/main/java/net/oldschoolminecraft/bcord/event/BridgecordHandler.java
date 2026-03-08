@@ -201,6 +201,7 @@ public abstract class BridgecordHandler extends PlayerListener
             }
         });
     }
+
     public void onPlayerQuit(PlayerQuitEvent event)
     {
         if (DISABLED) return;
