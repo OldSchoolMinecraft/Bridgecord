@@ -34,13 +34,22 @@ public class BotLinkCommand extends BotCommand
         {
             if (!hasRoleByID(Objects.requireNonNull(event.getMember()), String.valueOf(config.getConfigOption("staffRoleID"))))
             {
-                respond(event.getMessage(), "You do not have permission to force account links!", getConfig().shouldReply());
+                respond(event.getMessage(), "You do not have permission to do this!", getConfig().shouldReply());
                 return;
             }
 
             if (targetLinkName.startsWith("<@")) // they put the mention first instead of the username
             {
                 respond(event.getMessage(), "Staff Override Usage: `!link <Minecraft Name> <Discord User Mention>`", getConfig().shouldReply());
+                return;
+            }
+
+            if (args[1].equalsIgnoreCase("status")) // attempting to check link status
+            {
+                targetLinkName = args[2]; // bump username arg up a slot
+                boolean isLinked = linkHandler.isAccountLinked(targetLinkName);
+                String status = "**" + (isLinked ? "LINKED" : "NOT LINKED") + "**";
+                respond(event.getMessage(), "The username you provided is: " + status, getConfig().shouldReply());
                 return;
             }
 
